@@ -4,6 +4,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/model-viewer-3d/', // 👈 这句很关键！
   plugins: [vue()],
   server: {
     host: true, // 👈 允许局域网访问

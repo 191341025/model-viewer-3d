@@ -24,7 +24,7 @@
     // ]
 
     const urls = [
-        '/rocket/rocket.ply'
+        import.meta.env.BASE_URL + 'rocket/rocket.ply'
     ]
     let scene, camera, renderer, animationId, controls
 
@@ -56,7 +56,7 @@
         loadPlyModels(urls, scene, {
             onLoad: (meshes) => {
                 meshes.forEach((mesh, index) => {
-                    // console.log('加载成功:', mesh)
+                    console.log('加载成功:', mesh)
                     group.add(mesh)
                     scene.add(group)
                 })
