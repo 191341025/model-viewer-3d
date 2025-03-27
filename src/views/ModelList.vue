@@ -11,29 +11,39 @@
     </div>
   </template>
   
-  <script setup>
-  const models = [
-    {
-      name: '火箭模型 Alpha',
-      image: '/assets/model-alpha.jpg', // 先用占位图或未来替换路径
-      description: '一款展示火箭结构的3D模型。'
-    },
-    {
-      name: '建筑模型 Bravo',
-      image: '/assets/model-bravo.jpg',
-      description: '现代建筑风格的三层结构示意图。'
-    },
-    {
-      name: '设备模型 Charlie',
-      image: '/assets/model-charlie.jpg',
-      description: '工业机械设备结构的简化模型。'
-    }
-  ]
-  
-  function handleClick(model) {
-    console.log(`点击了模型：${model.name}`)
+<script setup>
+import router from '../router';
+
+const models = [
+  {
+    name: '火箭模型 Alpha',
+    image: '/assets/model-alpha.jpg',
+    description: '一款展示火箭结构的3D模型。',
+    route: '/models/rocket'
+  },
+  {
+    name: '建筑模型 Bravo',
+    image: '/assets/model-bravo.jpg',
+    description: '现代建筑风格的三层结构示意图。',
+    route: '/models/building' // 预留
+  },
+  {
+    name: '设备模型 Charlie',
+    image: '/assets/model-charlie.jpg',
+    description: '工业机械设备结构的简化模型。',
+    route: '/models/device' // 预留
   }
-  </script>
+]
+
+  function handleClick(model) {
+    // console.log(`点击了模型：${model.name}`)  
+    if(model.route){
+      router.push(model.route)
+    } else {
+      console.log('点击了模型：${model.name}')
+    }
+  }
+</script>
   
   <style scoped>
   .model-list {

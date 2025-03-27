@@ -55,3 +55,31 @@ loadModel({
 | 模型区域高亮/框选 | 实现更高级交互（如划选区域） |
 
 如需继续扩展功能或接入业务系统，可随时沟通定制。
+
+
+📦 加载 3D 模型前必须构建的核心对象（Three.js 模块依赖关系）
+在 Three.js 中加载并展示一个 3D 模型之前，通常需要依次构建以下核心对象：
+
+| 顺序 | 模块名     | 描述                                                | 封装建议         |
+|------|------------|-----------------------------------------------------|------------------|
+| ①    | `Scene`    | Three.js 的世界容器，所有模型、光源等都挂载在此对象上 | ✅ 已封装（必要） |
+| ②    | `Camera`   | 相机对象，决定用户从哪个角度观察场景                  | ✅ 建议封装       |
+| ③    | `Renderer` | 渲染器，将场景与相机组合渲染为图像输出至 HTML `<canvas>` | ✅ 强烈封装       |
+| ④    | `Light`    | 光源，决定模型是否可见，至少需要一个环境光或平行光      | ✅ 可封装组合光源 |
+| ⑤    | `Controls` | 鼠标控制器，允许用户旋转/缩放/拖拽                      | ✅ 建议封装       |
+| ⑥    | `Loader`   | 加载器，用于加载 `.glb` / `.gltf` 模型文件             | ✅ 建议封装       |
+
+
+
+[Scene] ← add ← [Model] ← loaded by [GLTFLoader]
+         ↑
+      [Camera] ← view scene from a position
+         ↑
+    [Renderer] ← render(scene, camera)
+         ↑
+    [DOM Canvas] ← appendChild(renderer.domElement)
+         ↑
+    [Controls] ← OrbitControls(camera, domElement)
+         ↑
+     Vue Component (e.g. RocketModel.vue)
+

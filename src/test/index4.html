@@ -42,11 +42,12 @@
     new THREE.Color(0.6, 0.6, 1)  // 淡蓝
   ];
   const materials = [];
-
+  // F:\projects\model-viewer-3d\src\assets
+  // F:\projects\model-viewer-3d\src\test
   const filePaths = [
-    './rocket/rocket1.ply',
-    './rocket/rocket2.ply',
-    './rocket/rocket3.ply',
+    '../assets/rocket/rocket1.ply',
+    '../assets/rocket/rocket2.ply',
+    '../assets/rocket/rocket3.ply',
   ];
 
   Promise.all(filePaths.map((path, i) => new Promise(resolve => {
