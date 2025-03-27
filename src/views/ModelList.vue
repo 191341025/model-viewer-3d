@@ -22,10 +22,10 @@ const models = [
     route: '/models/rocket'
   },
   {
-    name: '建筑模型 Bravo',
+    name: '钢铁侠 IronMan',
     image: '/assets/model-bravo.jpg',
-    description: '现代建筑风格的三层结构示意图。',
-    route: '/models/building' // 预留
+    description: '钢铁侠贴图版 马克几号我也不晓得',
+    route: '/models/ironman' 
   },
   {
     name: '设备模型 Charlie',

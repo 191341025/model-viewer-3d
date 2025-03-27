@@ -1,6 +1,8 @@
 <template>
     <div class="page-container">
         <h2 class="model-title">🚀 火箭模型展示页面</h2>
+        <!-- ✅ 加载提示 -->
+        <ProgressBar :progress="loadProgress" />
         <div ref="canvasContainer" class="canvas-container"></div>
     </div>
 </template>
@@ -14,8 +16,11 @@
     import { initOrbitControls } from '@/three/controls/initOrbitControls'
     import { loadPlyModels } from '@/three/loaders/loadPlyModels'
     import { cleanupThree } from '@/three/utils/cleanupThree'
+    import ProgressBar from '@/components/ProgressBar.vue'
 
     const canvasContainer = ref(null)
+    const loadProgress = ref(0)
+    const isLoading = ref(true);
 
     // const urls = [
     //     '/rocket/rocket1.ply',
@@ -54,8 +59,10 @@
 
         // ✅ 在这里加载 ply 模型
         loadPlyModels(urls, scene, {
+            onProgress: p => loadProgress.value = p,
             onLoad: (meshes) => {
                 meshes.forEach((mesh, index) => {
+                    isLoading.value = false
                     console.log('加载成功:', mesh)
                     group.add(mesh)
                     scene.add(group)
@@ -131,6 +138,28 @@
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+    .loading-mask {
+        position: absolute;
+        top: 100px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+    }
+    .progress-bar {
+        width: 60%;
+        height: 10px;
+        margin: 12px auto;
+        background: #eee;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .bar {
+        height: 100%;
+        background: linear-gradient(to right, #4caf50, #81c784);
+    }
+
 
 </style>
   

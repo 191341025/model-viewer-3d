@@ -17,43 +17,51 @@ export function loadPlyModels(urls, scene, options = {}) {
   const loader = new PLYLoader()
   const meshes = []
   let loadedCount = 0
+  let fakeProgress = 0
+
+  const updateFakeProgress = () => {
+    if (fakeProgress < 95) {
+      fakeProgress += Math.random() * 2 // 每次涨 1~2%
+      options.onProgress?.(Math.min(fakeProgress, 95))
+      setTimeout(updateFakeProgress, 100)
+    }
+  }
+  updateFakeProgress()
 
   urls.forEach((url, index) => {
     loader.load(
       url,
-
-      // 加载成功
       geometry => {
         geometry.computeVertexNormals()
-
         const hasColor = geometry.hasAttribute('color')
-
-        // 可传入自定义材质；否则使用默认点云材质
-        const material =
-          options.materials?.[index] ||
-          new THREE.PointsMaterial({
-            size: 0.01,
-            vertexColors: hasColor,
-            color: hasColor ? undefined : 0xffffff
-          })
-
+        const material = new THREE.PointsMaterial({
+          size: 0.02,
+          vertexColors: hasColor,
+          color: hasColor ? undefined : 0xffffff,
+          transparent: true,
+          opacity: 0.6
+        })
         const mesh = new THREE.Points(geometry, material)
-
-        // 居中模型，使其以自身中心为原点
-        geometry.center()
-
+        mesh.name = `model-${index}`
         scene.add(mesh)
         meshes.push(mesh)
 
         loadedCount++
+        const percent = Math.floor((loadedCount / urls.length) * 100)
+        options.onProgress?.(percent)
+
         if (loadedCount === urls.length) {
           options.onLoad?.(meshes)
         }
       },
-
-      undefined,
-
-      // 加载失败
+      xhr => {
+        if (xhr.lengthComputable) {
+          const realProgress = (xhr.loaded / xhr.total) * 100
+          // 用真实进度融合假进度
+          const percent = Math.min(fakeProgress + realProgress / urls.length, 99)
+          options.onProgress?.(Math.floor(percent))
+        }
+      },
       error => {
         console.error(`[PLY] 加载失败: ${url}`, error)
         options.onError?.(error, url)
