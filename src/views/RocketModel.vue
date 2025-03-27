@@ -1,6 +1,6 @@
 <template>
     <div class="page-container">
-        <h1>🚀 火箭模型展示页面</h1>
+        <h2 class="model-title">🚀 火箭模型展示页面</h2>
         <div ref="canvasContainer" class="canvas-container"></div>
     </div>
 </template>
@@ -8,34 +8,70 @@
 <script setup>
     import * as THREE from 'three'
     import { onMounted, ref, onBeforeUnmount } from 'vue';
-    import { createRocketSecne } from '../three/scenes/rocketScene';
+    import { createDefaultScene } from '@/three/scenes/createDefaultScene'
+    import { initCamera } from '@/three/camera/initCamera'
+    import { initRenderer } from '@/three/renderer/initRenderer'
+    import { initOrbitControls } from '@/three/controls/initOrbitControls'
+    import { loadPlyModels } from '@/three/loaders/loadPlyModels'
+    import { cleanupThree } from '@/three/utils/cleanupThree'
 
     const canvasContainer = ref(null)
-    
-    let scene, camera, renderer, animationId
+
+    // const urls = [
+    //     '/rocket/rocket1.ply',
+    //     '/rocket/rocket2.ply',
+    //     '/rocket/rocket3.ply'
+    // ]
+
+    const urls = [
+        '/rocket/rocket.ply'
+    ]
+    let scene, camera, renderer, animationId, controls
 
     onMounted(() =>{
         //创建场景
-        scene = createRocketSecne()
+        scene = createDefaultScene()
 
         //创建相机
-        camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-        )
-        camera.position.z = 5
+        camera = initCamera(canvasContainer.value)
 
         // 创建渲染器
-        renderer = new THREE.WebGLRenderer({ antialias: true })
-        renderer.setSize(window.innerWidth, window.innerHeight)
-        canvasContainer.value.appendChild(renderer.domElement)
+        renderer = initRenderer(canvasContainer.value)
+
+        controls = initOrbitControls(camera, renderer.domElement)
+        controls.minPolarAngle = 0;                // 最小仰角（默认值是 0）
+        controls.maxPolarAngle = Math.PI;          // 最大仰角，从 π/2 扩大到 π
+
+
+        const group = new THREE.Group()
+        // const materials = []
+        // const baseColors = [
+        //     new THREE.Color(1, 0.6, 0.6),
+        //     new THREE.Color(0.6, 1, 0.6),
+        //     new THREE.Color(0.6, 0.6, 1)
+        // ]
+        scene.add(group)
+
+        // ✅ 在这里加载 ply 模型
+        loadPlyModels(urls, scene, {
+            onLoad: (meshes) => {
+                meshes.forEach((mesh, index) => {
+                    // console.log('加载成功:', mesh)
+                    group.add(mesh)
+                    scene.add(group)
+                })
+                fitCameraToObject(camera, controls, group, 0.5)
+            },
+            onError: (err, url) => {
+                console.error('加载失败：', url, err)
+            }
+        })
 
         // 4. 动画渲染循环
         const animate = () => {
             animationId = requestAnimationFrame(animate)
             renderer.render(scene, camera)
+            controls?.update()
         }
         
         animate()
@@ -45,12 +81,13 @@
     })
 
     onBeforeUnmount(() => {
-        // 停止动画帧
-        cancelAnimationFrame(animationId)
-        // 清理监听器
-        window.removeEventListener('resize', onWindowResize)
-        // 释放渲染资源
-        renderer.dispose?.()
+        cleanupThree({
+            renderer,
+            scene,
+            controls,
+            animationId,
+            resizeHandler: onWindowResize
+        })
     })
 
     function onWindowResize() {
@@ -59,6 +96,25 @@
         camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight)
     }
+
+    function fitCameraToObject(camera, controls, object, offset = 1.5) {
+        const box = new THREE.Box3().setFromObject(object);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        // ✅ 设置相机初始角度（斜前方视角）
+        camera.position.copy(center.clone().add(new THREE.Vector3(10, 5, maxDim * offset)))
+        camera.lookAt(center)
+
+        // ✅ 更新控制器目标
+        if (controls) {
+            controls.target.copy(center)
+            controls.update()
+        }
+    }
+
+
 
 </script>
 
