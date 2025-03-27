@@ -70,16 +70,3 @@ loadModel({
 | ⑥    | `Loader`   | 加载器，用于加载 `.glb` / `.gltf` 模型文件             | ✅ 建议封装       |
 
 
-
-[Scene] ← add ← [Model] ← loaded by [GLTFLoader]
-         ↑
-      [Camera] ← view scene from a position
-         ↑
-    [Renderer] ← render(scene, camera)
-         ↑
-    [DOM Canvas] ← appendChild(renderer.domElement)
-         ↑
-    [Controls] ← OrbitControls(camera, domElement)
-         ↑
-     Vue Component (e.g. RocketModel.vue)
-
