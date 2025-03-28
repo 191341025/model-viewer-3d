@@ -16,7 +16,7 @@ export function loadObjMtlModel(objUrl, mtlUrl, scene, options = {}) {
     onLoad = () => {},
     onError = () => {},
     onProgress = () => {},
-    position = { x: 0, y: 0, z: 0 },
+    position = { x: 0, y: 1.5, z: 0 },
     scale = { x: 1, y: 1, z: 1 },
     rotate = { x: 0, y: 0, z: 0 }
   } = options

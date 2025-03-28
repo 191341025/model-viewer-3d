@@ -1,7 +1,8 @@
 <template>
     <div v-if="visible" class="progress-container">
       <div class="progress-message">
-        正在加载模型，请稍候... {{ Math.floor(currentProgress) }}%
+        <!-- Loading 3D Model... {{ Math.floor(currentProgress) }}% -->
+        Loading 3D Model
       </div>
       <div class="progress-bar">
         <div class="progress-fill" :style="{ width: currentProgress + '%' }"></div>
@@ -51,6 +52,7 @@
   
   .progress-message {
     margin-bottom: 8px;
+    font-size: 14px;
     color: #333;
   }
   

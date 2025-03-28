@@ -28,6 +28,12 @@ const models = [
     route: '/models/ironman' 
   },
   {
+    name: '小黄车 Yellow Car',
+    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
+    description: '一辆原地起飞的小黄车',
+    route: '/models/car' 
+  },
+  {
     name: '设备模型 Charlie',
     image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
     description: '工业机械设备结构的简化模型。',

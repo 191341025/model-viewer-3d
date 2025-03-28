@@ -16,7 +16,7 @@ export function initOrbitControls(camera, domElement) {
 
   // 开启阻尼效果，让交互更顺滑（需要在动画帧中调用 update）
   controls.enableDamping = true
-  controls.dampingFactor = 0.05 // 阻尼系数（越大越“黏”）
+  controls.dampingFactor = 0.04 // 阻尼系数（越大越“黏”）
 
   // 允许缩放（滚轮）
   controls.enableZoom = true
