@@ -55,7 +55,7 @@
         //     new THREE.Color(0.6, 1, 0.6),
         //     new THREE.Color(0.6, 0.6, 1)
         // ]
-        scene.add(group)
+        // scene.add(group)
 
         // ✅ 在这里加载 ply 模型
         loadPlyModels(urls, scene, {

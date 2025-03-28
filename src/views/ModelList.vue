@@ -17,19 +17,19 @@ import router from '../router';
 const models = [
   {
     name: '火箭模型 Alpha',
-    image: '/assets/model-alpha.jpg',
+    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
     description: '一款展示火箭结构的3D模型。',
     route: '/models/rocket'
   },
   {
     name: '钢铁侠 IronMan',
-    image: '/assets/model-bravo.jpg',
+    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
     description: '钢铁侠贴图版 马克几号我也不晓得',
     route: '/models/ironman' 
   },
   {
     name: '设备模型 Charlie',
-    image: '/assets/model-charlie.jpg',
+    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
     description: '工业机械设备结构的简化模型。',
     route: '/models/device' // 预留
   }

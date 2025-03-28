@@ -10,7 +10,7 @@ export function createDefaultScene() {
   const scene = new THREE.Scene()
 
   // 设置背景颜色（默认浅绿色）
-  scene.background = new THREE.Color('#e6f4ea') // 可根据需要更换
+  scene.background = new THREE.Color('#ffffff') // 可根据需要更换
 
   // 添加基础光源（方向光）
   const light = new THREE.DirectionalLight(0xffffff, 1) // 白光，强度1

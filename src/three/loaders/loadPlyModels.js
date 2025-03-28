@@ -17,16 +17,6 @@ export function loadPlyModels(urls, scene, options = {}) {
   const loader = new PLYLoader()
   const meshes = []
   let loadedCount = 0
-  let fakeProgress = 0
-
-  const updateFakeProgress = () => {
-    if (fakeProgress < 95) {
-      fakeProgress += Math.random() * 2 // 每次涨 1~2%
-      options.onProgress?.(Math.min(fakeProgress, 95))
-      setTimeout(updateFakeProgress, 100)
-    }
-  }
-  updateFakeProgress()
 
   urls.forEach((url, index) => {
     loader.load(
@@ -47,19 +37,19 @@ export function loadPlyModels(urls, scene, options = {}) {
         meshes.push(mesh)
 
         loadedCount++
-        const percent = Math.floor((loadedCount / urls.length) * 100)
-        options.onProgress?.(percent)
+        const percent = loadedCount / urls.length
+        options.onProgress?.(percent*100)
 
         if (loadedCount === urls.length) {
           options.onLoad?.(meshes)
         }
       },
       xhr => {
+        // 如果需要实时展示进度条的加载动画
         if (xhr.lengthComputable) {
-          const realProgress = (xhr.loaded / xhr.total) * 100
-          // 用真实进度融合假进度
-          const percent = Math.min(fakeProgress + realProgress / urls.length, 99)
-          options.onProgress?.(Math.floor(percent))
+          const realProgress = xhr.loaded / xhr.total
+          const totalPercent = (loadedCount + realProgress) / urls.length
+          options.onProgress?.(totalPercent)
         }
       },
       error => {

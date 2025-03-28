@@ -20,12 +20,14 @@
   const visible = ref(true)
   
   watch(() => props.progress, (newVal) => {
-    if (newVal >= 100) {
-      currentProgress.value = 100
-      // 加一点淡出动画
+    // newVal = newVal * 100
+    const percent = newVal > 1 ? newVal : newVal * 100
+    currentProgress.value = newVal
+
+    if (percent >= 100) {
       setTimeout(() => (visible.value = false), 500)
     } else {
-      currentProgress.value = newVal
+      visible.value = true // ✅ 每次加载开始，重新显示
     }
   })
   </script>
