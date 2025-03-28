@@ -20,7 +20,6 @@
 
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
-    const isLoading = ref(true);
 
     const objPath = import.meta.env.BASE_URL + 'IronMan/IronMan.obj'
     const mtlPath = import.meta.env.BASE_URL + 'IronMan/IronMan.mtl'
@@ -54,8 +53,6 @@
             rotate: { x: 0, y: 0, z: 0 },                // 初始角度
             onLoad: (obj) => {
                 console.log('✅ 模型加载成功', obj)
-                //隐藏进度条
-                isLoading.value = false
                 // 7. 加载成功后让相机自动适配模型视角
                 fitCameraToObject(camera, controls, obj)
             },

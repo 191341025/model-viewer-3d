@@ -2,7 +2,7 @@
     <div class="page-container">
         <h2 class="model-title">🚀 火箭模型展示页面</h2>
         <!-- ✅ 加载提示 -->
-        <ProgressBar :progress="loadProgress" />
+        <ProgressBar :progress="loadProgress" :v/>
         <div ref="canvasContainer" class="canvas-container"></div>
     </div>
 </template>
@@ -20,7 +20,6 @@
 
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
-    const isLoading = ref(true);
 
     // const urls = [
     //     '/rocket/rocket1.ply',
@@ -62,7 +61,6 @@
             onProgress: p => loadProgress.value = p,
             onLoad: (meshes) => {
                 meshes.forEach((mesh, index) => {
-                    isLoading.value = false
                     console.log('加载成功:', mesh)
                     group.add(mesh)
                     scene.add(group)
