@@ -41,7 +41,8 @@ html, body, #app {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, rgba(230, 244, 234, 1), rgba(208, 240, 192, 0.95));
+    padding: 20px;
+    background: linear-gradient(135deg, rgb(63, 138, 173), rgba(13, 103, 155, 0.95));
   }
 
   .model-title {

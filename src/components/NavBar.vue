@@ -62,7 +62,7 @@
     }
 
     .link:hover .iconfont {
-        color: #90ee90; /* hover 时图标变绿，可选 */
+        color: rgb(63, 138, 173); /* hover 时图标变绿，可选 */
     }
 
   </style>

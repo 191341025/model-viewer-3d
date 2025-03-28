@@ -20,10 +20,10 @@ export function initOrbitControls(camera, domElement) {
 
   // 允许缩放（滚轮）
   controls.enableZoom = true
-
+  // 允许旋转
+  controls.enableRotate = true  
   // 允许拖拽（右键）
-  controls.enablePan = true
-
+  controls.enablePan = false
   // 限制缩放距离（防止缩得太近或太远）
   controls.minDistance = 1
   controls.maxDistance = 100
