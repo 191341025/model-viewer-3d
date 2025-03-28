@@ -52,6 +52,7 @@
             scale: { x: 0.3, y: 0.3, z: 0.3 },              // 缩放倍数
             rotate: { x: 0, y: 0, z: 0 },                // 初始角度
             onLoad: (obj) => {
+                loadProgress.value = 1 // ✅ 主动触发进度为100%
                 console.log('✅ 模型加载成功', obj)
                 // 7. 加载成功后让相机自动适配模型视角
                 fitCameraToObject(camera, controls, obj)

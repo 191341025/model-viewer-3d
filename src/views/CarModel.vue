@@ -59,6 +59,7 @@
             rotate: { x: 0, y: 0, z: 0 },                // 初始角度
             onLoad: (model) => {
                 console.log('模型已加载:', model);
+                loadProgress.value = 1 // ✅ 主动触发进度为100%
                 group.rotation.y = 0
                 group.add(model)
                 scene.add(group)

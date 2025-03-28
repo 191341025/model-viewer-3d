@@ -60,6 +60,7 @@
         loadPlyModels(urls, scene, {
             onProgress: p => loadProgress.value = p,
             onLoad: (meshes) => {
+                loadProgress.value = 1 // ✅ 主动触发进度为100%
                 meshes.forEach((mesh, index) => {
                     console.log('加载成功:', mesh)
                     group.add(mesh)
