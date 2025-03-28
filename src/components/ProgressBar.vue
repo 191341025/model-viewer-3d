@@ -19,17 +19,23 @@
   const currentProgress = ref(0)
   const visible = ref(true)
   
-  watch(() => props.progress, (newVal) => {
-    // newVal = newVal * 100
-    const percent = newVal > 1 ? newVal : newVal * 100
-    currentProgress.value = newVal
+  watch(
+    () => props.progress,
+    (newVal) => {
+      const percent = Math.min(newVal * 100, 100)
+      currentProgress.value = newVal
 
-    if (percent >= 100) {
-      setTimeout(() => (visible.value = false), 500)
-    } else {
-      visible.value = true // ✅ 每次加载开始，重新显示
-    }
-  })
+      if (percent >= 100) {
+        setTimeout(() => {
+          visible.value = false
+        }, 500)
+      } else {
+        visible.value = true
+      }
+    },
+    { immediate: true } // ✅ 确保初次加载也触发
+  )
+
   </script>
   
   <style scoped>

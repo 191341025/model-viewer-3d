@@ -55,11 +55,10 @@
             onProgress: p => loadProgress.value = p,
             path: glbPath,
             position: { x: 0, y: 1.5, z: 0 },              // 放置位置
-            scale: { x: 5, y: 5, z: 5 },              // 缩放倍数
+            scale: { x: 8, y: 8, z: 8 },              // 缩放倍数
             rotate: { x: 0, y: 0, z: 0 },                // 初始角度
             onLoad: (model) => {
                 console.log('模型已加载:', model);
-                loadProgress.value = 1 // ✅ 主动触发进度为100%
                 group.rotation.y = 0
                 group.add(model)
                 scene.add(group)
