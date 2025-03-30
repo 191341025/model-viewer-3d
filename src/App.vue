@@ -1,14 +1,11 @@
 <template>
-  <div class="layout">
-    <NavBar />
-    <main class="content">
-      <router-view />
-    </main>
+  <div>
+    <MainLayout />
   </div>
 </template>
 
 <script setup>
-import NavBar from './components/NavBar.vue'
+import MainLayout from '@/layouts/MainLayout.vue'
 </script>
 
 <style scoped>

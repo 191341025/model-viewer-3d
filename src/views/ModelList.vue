@@ -53,9 +53,10 @@ const models = [
   
   <style scoped>
   .model-list {
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 14px;
     padding: 10px;
   }
   

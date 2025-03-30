@@ -11,6 +11,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "element-plus": "^2.9.7",
     "three": "^0.174.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"

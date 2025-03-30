@@ -2,7 +2,7 @@
     <div class="page-container">
         <h2 class="model-title">🚀 火箭模型展示页面</h2>
         <!-- ✅ 加载提示 -->
-        <ProgressBar :progress="loadProgress" :v/>
+        <ProgressBar :progress="loadProgress"/>
         <div ref="canvasContainer" class="canvas-container"></div>
     </div>
 </template>
@@ -128,10 +128,11 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+        border-radius: 8px;
     }
     .canvas-container {
         width: 100%;
-        height: calc(100vh - 100px);
+        height: calc(100vh - 200px);
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

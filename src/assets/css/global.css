@@ -42,7 +42,7 @@ html, body, #app {
     margin: 0;
     padding: 0;
     padding: 20px;
-    background: linear-gradient(135deg, rgb(63, 138, 173), rgba(13, 103, 155, 0.95));
+    background: linear-gradient(135deg, #1f2d3d, rgba(139, 140, 143, 0.95));
   }
 
   .model-title {
