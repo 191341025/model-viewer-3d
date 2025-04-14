@@ -17,6 +17,7 @@ export function loadPlyModels(urls, scene, options = {}) {
   const loader = new PLYLoader()
   const meshes = []
   let loadedCount = 0
+  const breathingTargets = [] // 👈 存储 floor2/floor3
 
   urls.forEach((url, index) => {
     loader.load(
@@ -38,7 +39,6 @@ export function loadPlyModels(urls, scene, options = {}) {
         }
         const mesh = new THREE.Points(geometry, material)
         mesh.name = `${url}`
-        scene.add(mesh)
         meshes.push(mesh)
 
         loadedCount++

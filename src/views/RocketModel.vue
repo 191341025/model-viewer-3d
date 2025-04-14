@@ -1,6 +1,6 @@
 <template>
     <div class="page-container">
-        <h4 class="model-title">🚀 火箭模型展示页面</h4>
+        <!-- <h4 class="model-title">🚀 火箭模型展示页面</h4> -->
 
         <button
         class="interaction-toggle"
@@ -8,7 +8,7 @@
         @click="toggleInteraction"
     >
         <span class="icon">✨</span>
-        {{ interactionEnabled ? '关闭交互功能' : '开启交互功能' }}
+        {{ interactionEnabled ? 'KFC楼体 关闭交互功能' : 'KFC楼体 开启交互功能' }}
     </button>
         <!-- ✅ 加载提示 -->
         <ProgressBar :progress="loadProgress"/>
@@ -160,7 +160,7 @@
                         // mat.color.setRGB(0.0, pulse * 0.8 + 0.2, 1.0)
                         // mat.opacity = 0.2 + 0.7 * pulse // 呼吸更明显
                         mat.color.setRGB(0.0, 0.5, 1)
-                        mat.opacity = 0.2 + 0.5 * pulse  // 范围：0.4 ~ 0.6（更自然）
+                        mat.opacity = 0.2 + 0.7 * pulse  // 范围：0.4 ~ 0.6（更自然）
                     }
                 })
             }
