@@ -41,7 +41,7 @@ html, body, #app {
     height: 100%;
     margin: 0;
     padding: 0;
-    padding: 20px;
+    padding: 5px;
     background: linear-gradient(135deg, #1f2d3d, rgba(139, 140, 143, 0.95));
   }
 

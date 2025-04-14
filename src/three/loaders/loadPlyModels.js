@@ -22,17 +22,22 @@ export function loadPlyModels(urls, scene, options = {}) {
     loader.load(
       url,
       geometry => {
+        const isBreathingModel = ['floor2.ply', 'floor3.ply'].some(name => url.includes(name))
         geometry.computeVertexNormals()
         const hasColor = geometry.hasAttribute('color')
         const material = new THREE.PointsMaterial({
           size: 0.02,
-          vertexColors: hasColor,
-          color: hasColor ? undefined : 0xffffff,
+          vertexColors: hasColor && !isBreathingModel, // 👈 对闪烁的模型关闭 vertexColor
+          color: isBreathingModel ? 0x00ffff : 0xffffff, // 设置鲜明红色
           transparent: true,
           opacity: 0.6
         })
+        material.userData = {
+          time: Math.random() * Math.PI * 2,
+          speed: 3
+        }
         const mesh = new THREE.Points(geometry, material)
-        mesh.name = `model-${index}`
+        mesh.name = `${url}`
         scene.add(mesh)
         meshes.push(mesh)
 
