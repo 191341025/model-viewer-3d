@@ -16,9 +16,9 @@ import router from '../router';
 
 const models = [
   {
-    name: '火箭模型 Alpha',
+    name: 'KFC楼体模型 Alpha',
     image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
-    description: '一款展示火箭结构的3D模型。',
+    description: '一款展示KFC楼体结构的3D模型。',
     route: '/models/rocket'
   },
   {
