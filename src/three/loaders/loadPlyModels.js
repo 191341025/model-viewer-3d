@@ -30,11 +30,11 @@ export function loadPlyModels(urls, scene, options = {}) {
           vertexColors: hasColor && !isBreathingModel, // 👈 对闪烁的模型关闭 vertexColor
           color: isBreathingModel ? 0x00ffff : 0xffffff, // 设置鲜明红色
           transparent: true,
-          opacity: 0.6
+          opacity: 0.5
         })
         material.userData = {
           time: Math.random() * Math.PI * 2,
-          speed: 3
+          speed: 4
         }
         const mesh = new THREE.Points(geometry, material)
         mesh.name = `${url}`

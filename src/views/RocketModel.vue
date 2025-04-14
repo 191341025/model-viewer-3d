@@ -1,8 +1,18 @@
 <template>
     <div class="page-container">
         <h4 class="model-title">🚀 火箭模型展示页面</h4>
+
+        <button
+        class="interaction-toggle"
+        :class="{ active: interactionEnabled }"
+        @click="toggleInteraction"
+    >
+        <span class="icon">✨</span>
+        {{ interactionEnabled ? '关闭交互功能' : '开启交互功能' }}
+    </button>
         <!-- ✅ 加载提示 -->
         <ProgressBar :progress="loadProgress"/>
+        
         <div ref="canvasContainer" class="canvas-container"></div>
         <!-- ✅ 交互信息弹窗组件 -->
         <InfoPopup
@@ -53,6 +63,12 @@
         import.meta.env.BASE_URL + '/rocket/floor2.ply',
         import.meta.env.BASE_URL + '/rocket/floor3.ply'
     ]
+
+    const interactionEnabled = ref(false)
+
+    function toggleInteraction() {
+    interactionEnabled.value = !interactionEnabled.value
+    }
 
     // const urls = [
     //     import.meta.env.BASE_URL + 'rocket/rocket.ply'
@@ -132,23 +148,26 @@
         const animate = () => {
             animationId = requestAnimationFrame(animate)
             // 点云呼吸灯效果（通过透明度动画）
-            loadedMeshes.value.forEach((mesh) => {
-                const mat = mesh.material
-                // console.log(mesh.name)
-                if (mesh.name == '/model-viewer-3d//rocket/floor2.ply'
-                    || mesh.name == '/model-viewer-3d//rocket/floor3.ply'
-                ) {
-                    mat.userData.time += 0.02 * mat.userData.speed
-                    const pulse = (Math.sin(mat.userData.time) + 1) / 2
-                    // mat.color.setRGB(0.0, pulse * 0.8 + 0.2, 1.0)
-                    // mat.opacity = 0.2 + 0.7 * pulse // 呼吸更明显
-                    mat.color.setRGB(0.0, 0.5, 1)
-                    mat.opacity = 0.3 + 0.7 * pulse  // 范围：0.4 ~ 0.6（更自然）
-                }
-            })
+            if (interactionEnabled.value) {
+                loadedMeshes.value.forEach((mesh) => {
+                    const mat = mesh.material
+                    // console.log(mesh.name)
+                    if (mesh.name == '/model-viewer-3d//rocket/floor2.ply'
+                        || mesh.name == '/model-viewer-3d//rocket/floor3.ply'
+                    ) {
+                        mat.userData.time += 0.02 * mat.userData.speed
+                        const pulse = (Math.sin(mat.userData.time) + 1) / 2
+                        // mat.color.setRGB(0.0, pulse * 0.8 + 0.2, 1.0)
+                        // mat.opacity = 0.2 + 0.7 * pulse // 呼吸更明显
+                        mat.color.setRGB(0.0, 0.5, 1)
+                        mat.opacity = 0.2 + 0.5 * pulse  // 范围：0.4 ~ 0.6（更自然）
+                    }
+                })
+            }
+            
 
             // ✅ 鼠标悬停代理检测（放在这里）
-            if (needHoverCheck && hoverEvent) {
+            if (needHoverCheck && hoverEvent && interactionEnabled.value) {
                 needHoverCheck = false
 
                 const rect = renderer.domElement.getBoundingClientRect()
@@ -176,6 +195,7 @@
         // const hoverTargets = ref([]) // 只检测目标对象
 
         renderer.domElement.addEventListener('click', (event) => {
+            if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
             const rect = renderer.domElement.getBoundingClientRect()
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
@@ -278,6 +298,33 @@
     .bar {
         height: 100%;
         background: linear-gradient(to right, #4caf50, #81c784);
+    }
+    .interaction-toggle {
+        /* position: absolute; */
+        top: 16px;
+        right: 24px;
+        z-index: 1000;
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 2px solid #1e90ff;
+        background: white;
+        color: #1e90ff;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .interaction-toggle:hover {
+        background: #e6f2ff;
+    }
+
+    .interaction-toggle.active {
+        background: linear-gradient(to right, #00b4db, #0083b0);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 0 8px rgba(0, 183, 255, 0.6);
+    }
+
+    .interaction-toggle .icon {
+        font-size: 16px;
     }
 
 
