@@ -28,6 +28,7 @@
     import * as THREE from 'three'
     import { onMounted, ref, onBeforeUnmount, watch  } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
+    import { createAdvancedScene } from '@/three/scenes/createAdvancedScene'
     import { initCamera } from '@/three/camera/initCamera'
     import { initRenderer } from '@/three/renderer/initRenderer'
     import { initOrbitControls } from '@/three/controls/initOrbitControls'
@@ -71,7 +72,19 @@
     onMounted(() =>{
 
         //创建场景
-        scene = createDefaultScene()
+        // scene = createDefaultScene()
+        scene = createAdvancedScene({
+        enableGradientBg: true,
+        gradientColors: ['#FFF68F', '#8B5742'],
+        enableStars: false,
+        enableFog: false,
+        fogColor: '#003366',
+        fogNear: 30,
+        fogFar: 200,
+        enableMirrorFloor: false,
+        enableDustParticles: false
+        })
+
 
         //创建相机
         camera = initCamera(canvasContainer.value)
@@ -254,7 +267,7 @@
         const center = box.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
 
-        center.y += -6 // 整体抬高模型焦点
+        center.y += -5.5 // 整体抬高模型焦点
 
         // ✅ 设置相机初始角度（斜前方视角）
         camera.position.copy(center.clone().add(new THREE.Vector3(10, 5, maxDim * offset)))
