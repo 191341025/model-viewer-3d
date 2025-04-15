@@ -38,6 +38,6 @@ export function cleanupThree({
     // 尝试释放 WebGL 渲染器内部缓存资源
     renderer?.dispose?.()
   
-    console.log('[Three] ✅ 清理完毕')
+    // console.log('[Three] ✅ 清理完毕')
   }
   

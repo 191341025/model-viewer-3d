@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 
 // 所有生成的交互代理都存储在这里
+// 这是第一版几何绘制
 const proxyMeshes = []
 
 /**
@@ -13,7 +14,7 @@ const proxyMeshes = []
 export function createInteractionProxy(name, center, size, options = {}) {
   const scale = options.scale || 1.0
   const opacity = options.opacity ?? 0.0
-  const color = options.color || 0x00ffff
+  const color = options.color || 0x6E8B3D
 
   const geometry = new THREE.BoxGeometry(size.x * scale, size.y * scale, size.z * scale)
   const material = new THREE.MeshBasicMaterial({
@@ -25,7 +26,8 @@ export function createInteractionProxy(name, center, size, options = {}) {
 
   const proxy = new THREE.Mesh(geometry, material)
   proxy.position.copy(center)
-  proxy.name = name
+  proxy.userData.isProxy = true
+  proxy.name = name + '-proxy'
 
   proxyMeshes.push(proxy)
   return proxy

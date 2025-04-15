@@ -26,7 +26,7 @@
 
 <script setup>
     import * as THREE from 'three'
-    import { onMounted, ref, onBeforeUnmount } from 'vue';
+    import { onMounted, ref, onBeforeUnmount, watch  } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
     import { initCamera } from '@/three/camera/initCamera'
     import { initRenderer } from '@/three/renderer/initRenderer'
@@ -35,6 +35,7 @@
     import { cleanupThree } from '@/three/utils/cleanupThree'
     import ProgressBar from '@/components/ProgressBar.vue'
     import { createProxyFromMesh, getAllProxies } from '@/three/utils/interactionProxies'
+    import { createSmartProxyFromMesh, getAllSmartProxies } from '@/three/utils/interactionProxiesSmart'
     import InfoPopup from '@/components/InfoPopup.vue'
 
     let hoverEvent = null
@@ -42,8 +43,7 @@
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
 
-    // 新增这两个变量
-
+    const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
     const loadedMeshes = ref([]) // 保存所有加载成功的点云模型
@@ -52,35 +52,22 @@
     const popupInfo = ref({ title: '', fields: {} })
     const popupStyle = ref({})
 
-    // const urls = [
-    //     import.meta.env.BASE_URL + '/rocket/rocket1.ply',
-    //     import.meta.env.BASE_URL + '/rocket/rocket2.ply',
-    //     import.meta.env.BASE_URL + '/rocket/rocket3.ply'
-    // ]
-
     const urls = [
         import.meta.env.BASE_URL + '/rocket/main.ply',
         import.meta.env.BASE_URL + '/rocket/floor2.ply',
         import.meta.env.BASE_URL + '/rocket/floor3.ply'
     ]
+    
 
     const interactionEnabled = ref(false)
 
     function toggleInteraction() {
-    interactionEnabled.value = !interactionEnabled.value
+        interactionEnabled.value = !interactionEnabled.value
     }
 
-    // const urls = [
-    //     import.meta.env.BASE_URL + 'rocket/rocket.ply'
-    // ]
     let scene, camera, renderer, animationId, controls
 
     onMounted(() =>{
-
-        const markerPoints = [
-            // { x: 71.557, y: -0.717, z: 8.947 }
-            { x: 70.993, y: -0.276, z: 8.952 }
-        ]
 
         //创建场景
         scene = createDefaultScene()
@@ -97,38 +84,33 @@
 
 
         const group = new THREE.Group()
-        // const materials = []
-        // const baseColors = [
-        //     new THREE.Color(1, 0.6, 0.6),
-        //     new THREE.Color(0.6, 1, 0.6),
-        //     new THREE.Color(0.6, 0.6, 1)
-        // ]
-        // scene.add(group)
 
         // ✅ 在这里加载 ply 模型
         loadPlyModels(urls, scene, {
             onProgress: p => loadProgress.value = p,
             onLoad: (meshes) => {
-                loadedMeshes.value = meshes // 👈 保存下来以便 animate() 使用
-                // hoverTargets.value = meshes.filter(m =>
-                //     m.name.includes('floor2') || m.name.includes('floor3')
-                // )
                 meshes.forEach((mesh, index) => {
-                    console.log('加载成功:', mesh)
+                    // console.log('加载成功:', mesh)
                     group.add(mesh)
                     if (mesh.name.includes('floor2') || mesh.name.includes('floor3')) {
-                        // ✅ 加入后再生成包围盒中心
-                        const proxy = createProxyFromMesh(mesh, {
-                        scale: 0.9,
-                        offsetY: 0.1,
-                        opacity: 0.0 // 先可见便于调试
+                        loadedMeshes.value.push(mesh)
+                        //✅ 加入后再生成包围盒中心
+                        // const proxy = createProxyFromMesh(mesh, {
+                        //     scale: 0.2,
+                        //     offsetY: 0.1,
+                        //     opacity: 1.0 // 先可见便于调试
+                        // })
+                        const proxy = createSmartProxyFromMesh(mesh, {
+                            useGeometryProxy: true,      // ✅ 贴合形状
+                            offsetY: 0.0,
+                            opacity: 0.0,
+                            color: 0x00ffff
                         })
                         group.add(proxy)
                     }
                 })
                 scene.add(group)
                 group.rotation.x = -Math.PI / 2;
-                loadedMeshes.value = meshes // 保存下来供 animate 使用
                 // 鼠标监听
                 renderer.domElement.addEventListener('mousemove', (event) => {
                     hoverEvent = event
@@ -143,28 +125,23 @@
         })
         // 5. 监听窗口变化，自适应画布
         window.addEventListener('resize', onWindowResize)
-
+        let i = 0;
         // 4. 动画渲染循环
         const animate = () => {
             animationId = requestAnimationFrame(animate)
-            // 点云呼吸灯效果（通过透明度动画）
-            if (interactionEnabled.value) {
-                loadedMeshes.value.forEach((mesh) => {
-                    const mat = mesh.material
-                    // console.log(mesh.name)
-                    if (mesh.name == '/model-viewer-3d//rocket/floor2.ply'
-                        || mesh.name == '/model-viewer-3d//rocket/floor3.ply'
-                    ) {
-                        mat.userData.time += 0.02 * mat.userData.speed
-                        const pulse = (Math.sin(mat.userData.time) + 1) / 2
-                        // mat.color.setRGB(0.0, pulse * 0.8 + 0.2, 1.0)
-                        // mat.opacity = 0.2 + 0.7 * pulse // 呼吸更明显
-                        mat.color.setRGB(0.0, 0.5, 1)
-                        mat.opacity = 0.2 + 0.7 * pulse  // 范围：0.4 ~ 0.6（更自然）
-                    }
-                })
+
+            // ✅ 更新当前悬停对象的呼吸动画
+            if (interactionEnabled.value && hoveredMesh.value) {
+                const mat = hoveredMesh.value.material
+                if (mat && mat.userData) {
+                    mat.userData.time += 0.02 * mat.userData.speed
+                    const pulse = (Math.sin(mat.userData.time) + 1) / 2
+                    // mat.color.setRGB(0.0, pulse * 0.5 + 0.1, 1.0)
+                    mat.color.setRGB(0.0, 0.5 + 0.5 * pulse, 0.5 + 0.5 * pulse) // 亮青色
+                    mat.opacity = 0.2 + 0.7 * pulse
+                    mat.needsUpdate = true
+                }
             }
-            
 
             // ✅ 鼠标悬停代理检测（放在这里）
             if (needHoverCheck && hoverEvent && interactionEnabled.value) {
@@ -176,11 +153,28 @@
                 raycaster.setFromCamera(mouse, camera)
 
                 // ✅ 代理体检测
-                const intersects = raycaster.intersectObjects(getAllProxies(), false)
+                const intersects = raycaster.intersectObjects(getAllSmartProxies().filter(p => p.userData.isProxy), false)
                 if (intersects.length > 0) {
+                    const proxy = intersects[0].object
                     document.body.style.cursor = 'pointer'
+
+                    // 找到真实点云 mesh（通过名字找）
+                    const mesh = loadedMeshes.value.find(m => proxy.name.includes(m.name))
+                    if (mesh && hoveredMesh.value !== mesh) {
+                        if (hoveredMesh.value) {
+                            restoreOriginalMaterial(hoveredMesh.value)
+                        }
+                        setBreathingMaterial(mesh)
+                        hoveredMesh.value = mesh
+                    }
                 } else {
                     document.body.style.cursor = 'default'
+
+                    // 鼠标移出时恢复材质
+                    if (hoveredMesh.value) {
+                        restoreOriginalMaterial(hoveredMesh.value)
+                        hoveredMesh.value = null
+                    }
                 }
             }
             
@@ -201,7 +195,7 @@
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
             raycaster.setFromCamera(mouse, camera)
 
-            const intersects = raycaster.intersectObjects(getAllProxies(), false)
+            const intersects = raycaster.intersectObjects(getAllSmartProxies().filter(p => p.userData.isProxy), false)
             if (intersects.length > 0) {
             const mesh = intersects[0].object
             popupInfo.value = {
@@ -259,6 +253,41 @@
             controls.update()
         }
     }
+
+    function restoreOriginalMaterial(mesh) {
+        const oldMat = mesh.material
+        const newMat = new THREE.PointsMaterial({
+            size: 0.02,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.6
+        })
+        mesh.material = newMat
+        oldMat.dispose()
+    }
+
+    function setBreathingMaterial(mesh) {
+        const oldMat = mesh.material
+        const newMat = new THREE.PointsMaterial({
+            size: 0.02,
+            vertexColors: false,
+            color: new THREE.Color(0x00ffff),
+            transparent: true,
+            opacity: 0.6
+        })
+        newMat.userData = {
+            time: Math.random() * Math.PI * 2,
+            speed: 4,
+            breathing: true
+        }
+        mesh.material = newMat
+        oldMat.dispose()
+    }
+
+    
+
+
+
 
 
 

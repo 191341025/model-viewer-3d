@@ -17,21 +17,18 @@ export function loadPlyModels(urls, scene, options = {}) {
   const loader = new PLYLoader()
   const meshes = []
   let loadedCount = 0
-  const breathingTargets = [] // 👈 存储 floor2/floor3
 
   urls.forEach((url, index) => {
     loader.load(
       url,
       geometry => {
-        const isBreathingModel = ['floor2.ply', 'floor3.ply'].some(name => url.includes(name))
         geometry.computeVertexNormals()
         const hasColor = geometry.hasAttribute('color')
         const material = new THREE.PointsMaterial({
           size: 0.02,
-          vertexColors: hasColor && !isBreathingModel, // 👈 对闪烁的模型关闭 vertexColor
-          color: isBreathingModel ? 0x00ffff : 0xffffff, // 设置鲜明红色
+          vertexColors: hasColor ? true : false,
           transparent: true,
-          opacity: 0.5
+          opacity: 0.6
         })
         material.userData = {
           time: Math.random() * Math.PI * 2,
