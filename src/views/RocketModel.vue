@@ -53,9 +53,10 @@
     const popupStyle = ref({})
 
     const urls = [
-        import.meta.env.BASE_URL + '/rocket/main.ply',
         import.meta.env.BASE_URL + '/rocket/floor2.ply',
-        import.meta.env.BASE_URL + '/rocket/floor3.ply'
+        import.meta.env.BASE_URL + '/rocket/floor3.ply',
+        import.meta.env.BASE_URL + '/rocket/main.ply'
+        
     ]
     
 
@@ -92,8 +93,8 @@
                 meshes.forEach((mesh, index) => {
                     // console.log('加载成功:', mesh)
                     group.add(mesh)
+                    loadedMeshes.value.push(mesh)
                     if (mesh.name.includes('floor2') || mesh.name.includes('floor3')) {
-                        loadedMeshes.value.push(mesh)
                         //✅ 加入后再生成包围盒中心
                         const proxy = createProxyFromMesh(mesh, {
                             scale: 0.8,
@@ -117,7 +118,7 @@
                     needHoverCheck = true
                 })
 
-                fitCameraToObject(camera, controls, group, 1.5)
+                fitCameraToObject(camera, controls, group, 1)
             },
             onError: (err, url) => {
                 console.error('加载失败：', url, err)
@@ -129,6 +130,18 @@
         // 4. 动画渲染循环
         const animate = () => {
             animationId = requestAnimationFrame(animate)
+
+            // 动画循环里只处理需要动画的 mesh
+            loadedMeshes.value.forEach((mesh) => {
+                const geo = mesh.geometry
+                if (!geo.userData?.isAnimated) return
+
+                const { totalCount, shownCount } = geo.userData
+                if (shownCount < totalCount) {
+                    geo.userData.shownCount += 500 // 控制绘制速度
+                    geo.setDrawRange(0, geo.userData.shownCount)
+                }
+            })
 
             // ✅ 更新当前悬停对象的呼吸动画
             if (interactionEnabled.value && hoveredMesh.value) {
@@ -241,7 +254,7 @@
         const center = box.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
 
-        center.y += -5 // 整体抬高模型焦点
+        center.y += -6 // 整体抬高模型焦点
 
         // ✅ 设置相机初始角度（斜前方视角）
         camera.position.copy(center.clone().add(new THREE.Vector3(10, 5, maxDim * offset)))
