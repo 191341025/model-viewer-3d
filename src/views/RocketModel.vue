@@ -95,17 +95,17 @@
                     if (mesh.name.includes('floor2') || mesh.name.includes('floor3')) {
                         loadedMeshes.value.push(mesh)
                         //✅ 加入后再生成包围盒中心
-                        // const proxy = createProxyFromMesh(mesh, {
-                        //     scale: 0.2,
-                        //     offsetY: 0.1,
-                        //     opacity: 1.0 // 先可见便于调试
-                        // })
-                        const proxy = createSmartProxyFromMesh(mesh, {
-                            useGeometryProxy: true,      // ✅ 贴合形状
-                            offsetY: 0.0,
-                            opacity: 0.0,
-                            color: 0x00ffff
+                        const proxy = createProxyFromMesh(mesh, {
+                            scale: 0.8,
+                            offsetY: 0.1,
+                            opacity: 0.0 // 先可见便于调试
                         })
+                        // const proxy = createSmartProxyFromMesh(mesh, {
+                        //     useGeometryProxy: false,      // ✅ 贴合形状
+                        //     offsetY: 0.0,
+                        //     opacity: 0.0,
+                        //     color: 0x00ffff
+                        // })
                         group.add(proxy)
                     }
                 })
@@ -153,7 +153,7 @@
                 raycaster.setFromCamera(mouse, camera)
 
                 // ✅ 代理体检测
-                const intersects = raycaster.intersectObjects(getAllSmartProxies().filter(p => p.userData.isProxy), false)
+                const intersects = raycaster.intersectObjects(getAllProxies().filter(p => p.userData.isProxy), false)
                 if (intersects.length > 0) {
                     const proxy = intersects[0].object
                     document.body.style.cursor = 'pointer'
@@ -195,7 +195,7 @@
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
             raycaster.setFromCamera(mouse, camera)
 
-            const intersects = raycaster.intersectObjects(getAllSmartProxies().filter(p => p.userData.isProxy), false)
+            const intersects = raycaster.intersectObjects(getAllProxies().filter(p => p.userData.isProxy), false)
             if (intersects.length > 0) {
             const mesh = intersects[0].object
             popupInfo.value = {
