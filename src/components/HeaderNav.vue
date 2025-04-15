@@ -2,9 +2,9 @@
     <div class="header-container">
       <div class="logo-area">
         <div class="logo-box">
-            
+          <img :src="logo" alt="Logo" style="width: 20px;"/>
         </div>
-        <span class="title">My Project</span>
+        <span class="title">3D 点云交互</span>
       </div>
       <el-menu
         mode="horizontal"
@@ -23,6 +23,7 @@
   </template>
   
   <script setup>
+  import logo from '@/assets/images/logo.png'
   import { useRouter, useRoute } from 'vue-router'
   
   const router = useRouter()
@@ -47,7 +48,7 @@
     background-color: #1f2d3d;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    color: white;
+    color: rgb(224, 218, 218);
   }
   
   .logo-area {
@@ -71,5 +72,25 @@
   .nav-menu {
     border-bottom: none;
   }
+
+  /* 强制修改 Element Plus 的 overflow 菜单弹出项样式 */
+  :deep(.el-menu--popup) {
+  background-color: red !important;
+}
+
+  :deep(.el-menu--popup .el-menu-item) {
+    color: #ffffff !important;
+    font-size: 14px;
+  }
+
+  :deep(.el-menu--popup .el-menu-item:hover) {
+    background-color: #409EFF !important;
+    color: #ffffff !important;
+  }
+
+
+
+
+
   </style>
   

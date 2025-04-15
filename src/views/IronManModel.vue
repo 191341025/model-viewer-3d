@@ -11,6 +11,8 @@
     import * as THREE from 'three'
     import { onMounted, ref, onBeforeUnmount } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
+    import { createSceneryBackground } from '@/three/effects/createSceneryBackground'
+    import { createAdvancedScene } from '@/three/scenes/createAdvancedScene'
     import { initCamera } from '@/three/camera/initCamera'
     import { initRenderer } from '@/three/renderer/initRenderer'
     import { initOrbitControls } from '@/three/controls/initOrbitControls'
@@ -28,7 +30,28 @@
 
     onMounted(() => {
         // 1. 创建场景
-        scene = createDefaultScene()
+        //创建场景
+        // scene = createDefaultScene()
+        scene = createAdvancedScene({
+        enableGradientBg: true,
+        gradientColors: ['#FFF68F', '#8B5742'],
+        enableStars: true,
+        enableFog: false,
+        fogColor: '#003366',
+        fogNear: 30,
+        fogFar: 200,
+        enableMirrorFloor: false,
+        enableDustParticles: true
+        })
+
+        createSceneryBackground(scene, {
+        count: 30,
+        area: 600,
+        minSize: 10,
+        maxSize: 30,
+        types: ['box', 'cone', 'sphere'],
+        colorPalette: ['#cccccc', '#999999', '#aaaaaa']
+        })
 
         // 2. 初始化相机
         camera = initCamera(canvasContainer.value)

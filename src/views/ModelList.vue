@@ -1,6 +1,6 @@
 <template>
     <div class="page-container model-list">
-      <h1>可浏览的 3D 模型</h1>
+      <h1 style="color: aliceblue;">可浏览的 3D 模型</h1>
       <div class="model-card" v-for="(model, index) in models" :key="index" @click="handleClick(model)">
         <img :src="model.image" alt="模型预览图" class="model-img" />
         <div class="model-info">

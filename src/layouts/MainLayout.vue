@@ -32,7 +32,6 @@
   
   .main-content {
     flex: 1;
-    overflow: auto; /* 只在这滚动 */
     background: #f0f2f5;
     padding: 16px;
     min-height: 0; /* 避免子项撑开 */

@@ -51,5 +51,22 @@ html, body, #app {
     font-size: 24px;
     line-height: 1.2;
     font-weight: 600;
+    color: #bccfbd;
   }
-  
+
+  /* 必须是全局样式！不要 scoped！ */
+  .el-menu--popup {
+    background-color: #1f2d3d !important;
+    border: none !important;
+  }
+
+  .el-menu--popup .el-menu-item {
+    color: #ffffff !important;
+    font-size: 14px;
+  }
+
+  .el-menu--popup .el-menu-item:hover {
+    background-color: #409EFF !important;
+    color: #ffffff !important;
+  }
+    
