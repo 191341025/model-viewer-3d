@@ -35,7 +35,7 @@ export function createSmartProxyFromMesh(mesh, options = {}) {
 
     smartProxyMeshes.push(proxy)
     return proxy
-  } else {
+  } else { 
     // ✅ 使用 Box3 创建常规立方体代理
     const box = new THREE.Box3().setFromObject(mesh)
     const size = box.getSize(new THREE.Vector3())
