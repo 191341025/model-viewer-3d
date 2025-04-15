@@ -28,6 +28,7 @@
     import * as THREE from 'three'
     import { onMounted, ref, onBeforeUnmount, watch  } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
+    // import { createSceneryBackground } from '@/three/effects/createSceneryBackground'
     import { createAdvancedScene } from '@/three/scenes/createAdvancedScene'
     import { initCamera } from '@/three/camera/initCamera'
     import { initRenderer } from '@/three/renderer/initRenderer'
@@ -84,6 +85,15 @@
         enableMirrorFloor: false,
         enableDustParticles: false
         })
+
+        // createSceneryBackground(scene, {
+        // count: 30,
+        // area: 600,
+        // minSize: 10,
+        // maxSize: 30,
+        // types: ['box', 'cone', 'sphere'],
+        // colorPalette: ['#cccccc', '#999999', '#aaaaaa']
+        // })
 
 
         //创建相机
