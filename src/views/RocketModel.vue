@@ -87,8 +87,8 @@
         // scene = createDefaultScene()
         scene = createAdvancedScene({
         enableGradientBg: true,
-        gradientColors: ['#FFF68F', '#8B5742'],
-        enableStars: false,
+        gradientColors: ['#02030f', '#0e1b33'],
+        enableStars: true,
         enableFog: false,
         fogColor: '#003366',
         fogNear: 30,
@@ -313,9 +313,10 @@
         const oldMat = mesh.material
         const newMat = new THREE.PointsMaterial({
             size: 0.02,
-            vertexColors: true,
+            vertexColors: false,
+            color: new THREE.Color(0xffcc88),
             transparent: true,
-            opacity: 0.6
+            opacity: 0.7
         })
         mesh.material = newMat
         oldMat.dispose()
@@ -326,9 +327,9 @@
         const newMat = new THREE.PointsMaterial({
             size: 0.02,
             vertexColors: false,
-            color: new THREE.Color(0x00ffff),
+            color: new THREE.Color(0xd0ecff),
             transparent: true,
-            opacity: 0.6
+            opacity: 0.7
         })
         newMat.userData = {
             time: Math.random() * Math.PI * 2,
@@ -350,7 +351,7 @@
             mainPlyMesh.material.opacity = 0.04;
             mainPlyMesh.material.color.set('#888888'); // 👈 淡灰色
         } else {
-            mainPlyMesh.material.opacity = 0.6;
+            mainPlyMesh.material.opacity = 1;
 
             // ✅ 用缓存的原始颜色恢复
             const originalColor = mainPlyMesh.userData.originalColor;

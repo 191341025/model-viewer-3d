@@ -71,9 +71,11 @@ export function loadPlyModels(urls, scene, options = {}) {
         // 创建点材质
         const material = new THREE.PointsMaterial({
           size: 0.02, // 点的大小
-          vertexColors: hasColor ? true : false, // 是否使用顶点颜色
+          // vertexColors: hasColor ? true : false, // 是否使用顶点颜色
+          vertexColors: false,
+          color: new THREE.Color(0xffcc88),
           transparent: true, // 启用透明度
-          opacity: 0.6 // 透明度值
+          opacity: 0.7 // 透明度值
         })
         // 为材质添加自定义数据，用于动画控制
         material.userData = {
