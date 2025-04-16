@@ -179,11 +179,11 @@
 </script>
 
 <style scoped>
-    .page-container {
+    /* .page-container {
         display: flex;
         flex-direction: column;
         gap: 16px;
-    }
+    } */
     .canvas-container {
         width: 100%;
         height: calc(100vh - 100px);

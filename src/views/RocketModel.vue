@@ -333,15 +333,9 @@
 </script>
 
 <style scoped>
-    .page-container {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        border-radius: 1px;
-    }
     .canvas-container {
-        width: 100%;
-        height: calc(100vh - 200px);
+        width: calc(100vw - 30px);
+        height: calc(100vh - 100px);
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -371,6 +365,7 @@
         display: flex;
         justify-content: flex-start;
         gap: 10px; /* 按钮之间的间距 */
+        margin-top: 5px;
     }
     .interaction-toggle {
         width: 120px; /* 设置按钮宽度 */
@@ -396,35 +391,6 @@
     .interaction-toggle .icon {
         font-size: 16px;
     }
-
-    
-    /* .interaction-toggle {
-        top: 16px;
-        right: 24px;
-        z-index: 1000;
-        padding: 8px 16px;
-        border-radius: 20px;
-        border: 2px solid #1e90ff;
-        background: white;
-        color: #1e90ff;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-    .interaction-toggle:hover {
-        background: #e6f2ff;
-    }
-
-    .interaction-toggle.active {
-        background: linear-gradient(to right, #00b4db, #0083b0);
-        color: white;
-        border-color: transparent;
-        box-shadow: 0 0 8px rgba(0, 183, 255, 0.6);
-    }
-
-    .interaction-toggle .icon {
-        font-size: 16px;
-    } */
-
 
 </style>
   

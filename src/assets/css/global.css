@@ -42,7 +42,12 @@ html, body, #app {
     margin: 0;
     padding: 0;
     padding: 5px;
-    background: linear-gradient(135deg, #1f2d3d, rgba(139, 140, 143, 0.95));
+    background: linear-gradient(135deg, #023123, rgba(139, 140, 143, 0.95));
+    border-radius: 12px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 使子元素水平居中 */
   }
 
   .model-title {

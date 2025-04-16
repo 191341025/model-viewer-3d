@@ -4,9 +4,7 @@
       <div class="main-body">
         <!-- <SidebarMenu /> -->
         <div class="main-content">
-          <div class="page-wrapper">
-            <router-view />
-          </div>
+          <router-view />
         </div>
       </div>
     </div>
@@ -35,15 +33,6 @@
     background: #f0f2f5;
     padding: 16px;
     min-height: 0; /* 避免子项撑开 */
-  }
-  
-  .page-wrapper {
-    min-height: 100%;
-    box-sizing: border-box;
-    padding: 16px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
   </style>
   

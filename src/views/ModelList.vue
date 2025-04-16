@@ -69,6 +69,7 @@ const models = [
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: transform 0.2s ease;
+    min-width: 500px
   }
   .model-card:hover {
     transform: translateY(-4px);
