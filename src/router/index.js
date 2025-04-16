@@ -38,12 +38,10 @@ const routes = [
   
 ]
 
-const isGithubPages = import.meta.env.MODE === 'ghpages'
-
 const router = createRouter({
-  history: isGithubPages
-    ? createWebHashHistory(import.meta.env.BASE_URL)
-    : createWebHistory(import.meta.env.BASE_URL),
+  history: __IS_GHPAGES__
+    ? createWebHashHistory('/model-viewer-3d/')
+    : createWebHistory('/model-viewer-3d/'),
   routes
 })
 export default router
