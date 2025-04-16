@@ -38,6 +38,7 @@
     let scene, camera, renderer, controls, animationId
   
     onMounted(() => {
+        document.body.style.cursor = 'default'
         initScene()
         loadPlyModelDetail(modelUrl)
         animate()
