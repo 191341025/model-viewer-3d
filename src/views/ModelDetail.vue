@@ -137,28 +137,31 @@
   <style scoped>
   .detail-container {
         display: flex;
-        height: 100vh;
+        height: 100%;
         box-sizing: border-box;
     }
     
     .left-panel {
         flex: 1;
         padding: 12px;
-        border-right: 1px solid #ccc;
+        /* border-right: 1px solid #ccc; */
+        display: flex;                  /* ✅ 关键：启用 Flex 布局 */
+        justify-content: center;       /* ✅ 水平居中 */
+        align-items: center;           /* ✅ 垂直居中 */
     }
     
     .canvas-box {
         width: 100%;
-        height: 100%;
+        height: calc(100vh - 100px);
         background-color: #666128;
         border-radius: 10px;
-        min-height: 300px; /* 防止为0 */
         overflow: hidden;
     }
   
     .right-panel {
         flex: 1;
         padding: 24px;
+        border-radius: 10px;
         overflow-y: auto;
         background-color: #fefefe;
     }
