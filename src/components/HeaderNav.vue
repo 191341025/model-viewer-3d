@@ -73,24 +73,5 @@
     border-bottom: none;
   }
 
-  /* 强制修改 Element Plus 的 overflow 菜单弹出项样式 */
-  :deep(.el-menu--popup) {
-  background-color: red !important;
-}
-
-  :deep(.el-menu--popup .el-menu-item) {
-    color: #ffffff !important;
-    font-size: 14px;
-  }
-
-  :deep(.el-menu--popup .el-menu-item:hover) {
-    background-color: #409EFF !important;
-    color: #ffffff !important;
-  }
-
-
-
-
-
   </style>
   
