@@ -88,6 +88,7 @@ export function loadPlyModels(urls, scene, options = {}) {
         mesh.name = fileName                    // 用于 Three.js 内部识别
         mesh.userData.url = url                // 原始文件路径，后续跳转可用
         mesh.userData.displayName = fileName   // 卡片标题或自定义名称
+        mesh.userData.originalColor = material.color.clone();   // 卡片标题或自定义名称
         meshes.push(mesh) // 将网格添加到数组中
 
         loadedCount++ // 增加已加载模型计数

@@ -10,8 +10,14 @@
                 {{ interactionEnabled ? '关闭交互' : '开启交互' }}
             </button>
             <!-- 添加其他按钮 -->
-            <!-- <button class="interaction-toggle">其他按钮1</button>
-            <button class="interaction-toggle">其他按钮2</button> -->
+            <button
+            class="interaction-toggle"
+            :class="{ active: mainPlyHidden }"
+            @click="toggleMainPlyVisibility"
+            >
+            {{ mainPlyHidden ? '恢复主楼层' : '隐藏主楼层' }}
+            </button>
+           <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
         <ProgressBar :progress="loadProgress"/>
@@ -45,9 +51,11 @@
 
     let hoverEvent = null
     let needHoverCheck = false
+    let mainPlyMesh = null; // 放到函数外面，全局用
+    let isMainPlyHidden = false;
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
-
+    const mainPlyHidden = ref(false)
     const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
@@ -117,6 +125,10 @@
             onProgress: p => loadProgress.value = p,
             onLoad: (meshes) => {
                 meshes.forEach((mesh, index) => {
+                    // 在 meshes.forEach 里面加这个：
+                    if (mesh.name.includes('main')) {
+                        mainPlyMesh = mesh;
+                    }
                     // console.log('加载成功:', mesh)
                     group.add(mesh)
                     loadedMeshes.value.push(mesh)
@@ -325,6 +337,29 @@
         }
         mesh.material = newMat
         oldMat.dispose()
+    }
+
+    function toggleMainPlyVisibility() {
+        if (!mainPlyMesh) return;
+
+        mainPlyHidden.value = !mainPlyHidden.value;
+
+        mainPlyMesh.material.transparent = true;
+
+        if (mainPlyHidden.value) {
+            mainPlyMesh.material.opacity = 0.04;
+            mainPlyMesh.material.color.set('#888888'); // 👈 淡灰色
+        } else {
+            mainPlyMesh.material.opacity = 0.6;
+
+            // ✅ 用缓存的原始颜色恢复
+            const originalColor = mainPlyMesh.userData.originalColor;
+            if (originalColor) {
+            mainPlyMesh.material.color.copy(originalColor);
+            }
+        }
+
+        mainPlyMesh.material.needsUpdate = true;
     }
 
     
