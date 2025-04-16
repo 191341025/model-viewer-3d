@@ -1,60 +1,117 @@
 <template>
-    <div v-if="visible" class="popup-container" :style="style">
-      <div class="popup-card">
-        <div class="popup-header">
-          <span>{{ info.title }}</span>
-          <button @click="close">×</button>
-        </div>
-        <div class="popup-body">
-          <p v-for="(val, key) in info.fields" :key="key">
-            <strong>{{ key }}：</strong>{{ val }}
-          </p>
-        </div>
+  <div v-if="visible" class="popup-container" :style="style">
+    <div class="popup-card">
+      <div class="popup-header">
+        <span class="popup-title">{{ info.title }}</span>
+        <button class="close-btn" @click="close">×</button>
+      </div>
+      <div class="popup-body">
+        <p v-for="(val, key) in info.fields" :key="key">
+          <strong>{{ key }}：</strong>{{ val }}
+        </p>
+      </div>
+      <div class="popup-footer" v-if="info.jump">
+        <button class="detail-btn" @click="goToDetail(info)">查看详情 →</button>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
   
   <script setup>
-  defineProps({
-    visible: Boolean,
-    info: Object,
-    style: Object
-  })
-  
-  const emit = defineEmits(['close'])
-  const close = () => emit('close')
+    import { useRouter } from 'vue-router'
+
+    defineProps({
+      visible: Boolean,
+      info: Object,
+      style: Object
+    })
+
+    const emit = defineEmits(['close'])
+    const close = () => emit('close')
+
+    const router = useRouter()
+    const goToDetail = (info) => {
+      router.push({
+        name: 'ModelDetail',
+        query: {
+          id: info.id,
+          name: info.name || info.title,
+          modelUrl: info.modelUrl
+        }
+      })
+    }
+
   </script>
   
   <style scoped>
-  .popup-container {
-    position: absolute;
-    z-index: 1000;
-    pointer-events: auto;
-  }
-  .popup-card {
-    background: white;
-    border-radius: 8px;
-    padding: 12px 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    width: 240px;
-    font-size: 14px;
-  }
-  .popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 8px;
-  }
-  .popup-body p {
-    margin: 4px 0;
-  }
-  .popup-header button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
+    .popup-container {
+      position: absolute;
+      z-index: 1000;
+      pointer-events: auto;
+    }
+
+    .popup-card {
+      background: linear-gradient(135deg, #f8fbff, #eef3fa);
+      border-left: 4px solid #409eff;
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      width: 260px;
+      font-size: 14px;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .popup-title {
+      font-size: 15px;
+      color: #2c3e50;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    .close-btn:hover {
+      color: #000;
+    }
+
+    .popup-body p {
+      margin: 6px 0;
+      line-height: 1.4;
+    }
+
+    .popup-footer {
+      margin-top: 12px;
+      text-align: right;
+    }
+
+    .detail-btn {
+      background-color: #409eff;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .detail-btn:hover {
+      background-color: #66b1ff;
+    }
+
   </style>
   

@@ -65,7 +65,7 @@
     ]
     
 
-    const interactionEnabled = ref(false)
+    const interactionEnabled = ref(true)
 
     function toggleInteraction() {
         interactionEnabled.value = !interactionEnabled.value
@@ -164,7 +164,7 @@
 
                 const { totalCount, shownCount } = geo.userData
                 if (shownCount < totalCount) {
-                    geo.userData.shownCount += 500 // 控制绘制速度
+                    geo.userData.shownCount += 2000 // 控制绘制速度
                     geo.setDrawRange(0, geo.userData.shownCount)
                 }
             })
@@ -233,16 +233,20 @@
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
             raycaster.setFromCamera(mouse, camera)
-
+            
             const intersects = raycaster.intersectObjects(getAllProxies().filter(p => p.userData.isProxy), false)
             if (intersects.length > 0) {
             const mesh = intersects[0].object
             popupInfo.value = {
-                title: mesh.name.replace('-proxy', ''),
+                title: mesh.name,
+                id: mesh.uuid.slice(0, 8),
+                name: mesh.name,
+                modelUrl: mesh.userData.url, // 使用 userData.url 或模型名作为路径
+                jump: true,
                 fields: {
-                类型: '交互楼层',
-                名称: mesh.name,
-                编号: mesh.uuid.slice(0, 8)
+                    类型: '交互楼层',
+                    名称: mesh.name,
+                    编号: mesh.uuid.slice(0, 8)
                 }
             }
             popupStyle.value = {

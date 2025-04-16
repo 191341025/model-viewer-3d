@@ -11,7 +11,7 @@ const proxyMeshes = []
  * @param {THREE.Vector3} size - 代理的包围盒尺寸
  * @param {Object} [options] - 可选项（透明度、颜色、缩放）
  */
-export function createInteractionProxy(name, center, size, options = {}) {
+export function createInteractionProxy(mesh, center, size, options = {}) {
   const scale = options.scale || 1.0
   const opacity = options.opacity ?? 0.0
   const color = options.color || 0x6E8B3D
@@ -26,9 +26,10 @@ export function createInteractionProxy(name, center, size, options = {}) {
 
   const proxy = new THREE.Mesh(geometry, material)
   proxy.position.copy(center)
+  proxy.name = mesh.name                    // 用于 Three.js 内部识别
+  proxy.userData.url = mesh.userData.url                // 原始文件路径，后续跳转可用
+  proxy.userData.displayName = mesh.userData.fileName   // 卡片标题或自定义名称
   proxy.userData.isProxy = true
-  proxy.name = name + '-proxy'
-
   proxyMeshes.push(proxy)
   return proxy
 }
@@ -48,7 +49,7 @@ export function createProxyFromMesh(mesh, options = {}) {
     center.y += options.offsetY
   }
 
-  const proxy = createInteractionProxy(mesh.name + '-proxy', center, size, options)
+  const proxy = createInteractionProxy(mesh, center, size, options)
   return proxy
 }
 

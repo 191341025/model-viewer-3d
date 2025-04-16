@@ -82,7 +82,12 @@ export function loadPlyModels(urls, scene, options = {}) {
         }
         // 创建点网格对象
         const mesh = new THREE.Points(geometry, material)
-        mesh.name = `${url}` // 为网格设置名称（使用文件路径）
+        // ✅ 提取文件名用于 name，例如 floor1.ply
+        const fileName = url.split('/').pop().replace('.ply', '')
+        // 正确设置多个属性
+        mesh.name = fileName                    // 用于 Three.js 内部识别
+        mesh.userData.url = url                // 原始文件路径，后续跳转可用
+        mesh.userData.displayName = fileName   // 卡片标题或自定义名称
         meshes.push(mesh) // 将网格添加到数组中
 
         loadedCount++ // 增加已加载模型计数

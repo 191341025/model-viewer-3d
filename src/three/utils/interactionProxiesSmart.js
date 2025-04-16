@@ -26,7 +26,7 @@ export function createSmartProxyFromMesh(mesh, options = {}) {
     })
     const proxy = new THREE.Mesh(geometry, material)
     proxy.userData.isProxy = true
-    proxy.name = mesh.name + '-proxy'
+    proxy.name = mesh.name
     if (options.offsetY) {
         proxy.position.y += options.offsetY
     } else {
@@ -52,7 +52,7 @@ export function createSmartProxyFromMesh(mesh, options = {}) {
     })
     const proxy = new THREE.Mesh(geometry, material)
     proxy.userData.isProxy = true
-    proxy.name = mesh.name + '-proxy'
+    proxy.name = mesh.name
     proxy.position.copy(center)
     smartProxyMeshes.push(proxy)
     return proxy

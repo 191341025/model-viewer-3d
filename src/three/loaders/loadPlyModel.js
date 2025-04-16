@@ -15,7 +15,6 @@ import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
  */
 export function loadPlyModel(url, scene, options = {}) {
   const loader = new PLYLoader()
-
   loader.load(
     url,
 
@@ -27,20 +26,24 @@ export function loadPlyModel(url, scene, options = {}) {
       // 如果几何体中带颜色属性（例如 point cloud），启用顶点颜色
       const hasColor = geometry.hasAttribute('color')
 
-      const material = options.material || new THREE.PointsMaterial({
-        size: 0.01,
-        vertexColors: hasColor ? true : false,
-        color: hasColor ? undefined : 0xffffff,
+      // 创建点材质
+      const material = new THREE.PointsMaterial({
+        size: 0.02, // 点的大小
+        vertexColors: hasColor ? true : false, // 是否使用顶点颜色
+        transparent: true, // 启用透明度
+        opacity: 0.6 // 透明度值
       })
 
       // 创建网格对象（点模型或普通模型）
       const mesh = new THREE.Points(geometry, material)
-
+      // ✅ 提取文件名用于 name，例如 floor1.ply
+      const fileName = url.split('/').pop().replace('.ply', '')
+      // 正确设置多个属性
+      mesh.name = fileName                    // 用于 Three.js 内部识别
+      mesh.userData.url = url                // 原始文件路径，后续跳转可用
+      mesh.userData.displayName = fileName   // 卡片标题或自定义名称
       // 可选：居中几何体
       geometry.center()
-
-      // 添加到场景中
-      scene.add(mesh)
 
       // 回调通知外部
       options.onLoad?.(mesh)

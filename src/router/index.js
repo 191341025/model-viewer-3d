@@ -1,10 +1,11 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import ModelList from '../views/ModelList.vue'
 import IronMan from '../views/IronManModel.vue'
 import Rocket from '../views/RocketModel.vue'
 import Car from '../views/CarModel.vue'
+import ModelDetail from '../views/ModelDetail.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -28,13 +29,21 @@ const routes = [
     path: '/models/car',
     name: 'CarModel',
     component: Car
+  },
+  {
+    path: '/model-detail',
+    name: 'ModelDetail',
+    component: ModelDetail
   }
   
 ]
 
-const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes,
-})
+const isGithubPages = import.meta.env.MODE === 'ghpages'
 
+const router = createRouter({
+  history: isGithubPages
+    ? createWebHashHistory(import.meta.env.BASE_URL)
+    : createWebHistory(import.meta.env.BASE_URL),
+  routes
+})
 export default router
