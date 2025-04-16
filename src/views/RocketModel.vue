@@ -1,15 +1,18 @@
 <template>
     <div class="page-container">
-        <!-- <h4 class="model-title">🚀 火箭模型展示页面</h4> -->
-
-        <button
-        class="interaction-toggle"
-        :class="{ active: interactionEnabled }"
-        @click="toggleInteraction"
-    >
-        <span class="icon">✨</span>
-        {{ interactionEnabled ? 'KFC楼体 关闭交互功能' : 'KFC楼体 开启交互功能' }}
-    </button>
+        <div class="button-container">
+            <h4 class="model-title">🚀 KFC模型展示页面</h4>
+            <button
+                class="interaction-toggle"
+                :class="{ active: interactionEnabled }"
+                @click="toggleInteraction"
+            >
+                {{ interactionEnabled ? '关闭交互' : '开启交互' }}
+            </button>
+            <!-- 添加其他按钮 -->
+            <!-- <button class="interaction-toggle">其他按钮1</button>
+            <button class="interaction-toggle">其他按钮2</button> -->
+        </div>
         <!-- ✅ 加载提示 -->
         <ProgressBar :progress="loadProgress"/>
         
@@ -364,8 +367,38 @@
         height: 100%;
         background: linear-gradient(to right, #4caf50, #81c784);
     }
+    .button-container {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px; /* 按钮之间的间距 */
+    }
     .interaction-toggle {
-        /* position: absolute; */
+        width: 120px; /* 设置按钮宽度 */
+        border-radius: 5px;
+        border: 1px solid #1e90ff;
+        background: white;
+        color: #1e90ff;
+        font-weight: bold;
+        transition: 0.3s;
+        font-size: 14px;
+    }
+    .interaction-toggle:hover {
+        background: #e6f2ff;
+    }
+
+    .interaction-toggle.active {
+        background: linear-gradient(to right, #00b4db, #0083b0);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 0 8px rgba(0, 183, 255, 0.6);
+    }
+
+    .interaction-toggle .icon {
+        font-size: 16px;
+    }
+
+    
+    /* .interaction-toggle {
         top: 16px;
         right: 24px;
         z-index: 1000;
@@ -390,7 +423,7 @@
 
     .interaction-toggle .icon {
         font-size: 16px;
-    }
+    } */
 
 
 </style>
