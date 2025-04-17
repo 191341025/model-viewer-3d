@@ -1,7 +1,7 @@
 <template>
     <div class="page-container">
         <div class="button-container">
-            <h4 class="model-title">🚀 KFC模型展示页面</h4>
+            <h4 class="model-title">KFC模型</h4>
             <div class="switch-wrapper">
                 <span class="switch-label">交互功能</span>
                 <el-switch
@@ -425,7 +425,20 @@
 
     .switch-label {
     font-weight: bold;
+    white-space: nowrap;        /* ❗不换行 */
+    overflow: hidden;           /* ❗超出隐藏 */
+    text-overflow: ellipsis;    /* ❗显示省略号（...） */
+    max-width: 100%;            /* 可选：限制最大宽度 */
+    display: inline-block;      /* 可选：确保 ellipsis 生效 */
     color: #fff;
+    }
+
+    .model-title {
+        white-space: nowrap;        /* ❗不换行 */
+        overflow: hidden;           /* ❗超出隐藏 */
+        text-overflow: ellipsis;    /* ❗显示省略号（...） */
+        max-width: 100%;            /* 可选：限制最大宽度 */
+        display: inline-block;      /* 可选：确保 ellipsis 生效 */
     }
 
 </style>
