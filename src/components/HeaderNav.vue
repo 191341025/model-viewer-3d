@@ -23,14 +23,22 @@
   </template>
   
   <script setup>
+  import { ref, watch } from 'vue'
   import logo from '@/assets/images/logo.png'
   import { useRouter, useRoute } from 'vue-router'
   
   const router = useRouter()
   const route = useRoute()
   
-  const activeIndex = route.path
+  const activeIndex = ref(route.path) // 初始绑定
   
+  watch(
+    () => route.path,
+    (newPath) => {
+      activeIndex.value = newPath
+    }
+  )
+
   const handleSelect = (index) => {
     if (index !== route.path) {
       router.push(index)
