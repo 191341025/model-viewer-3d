@@ -1,95 +1,159 @@
 <template>
-    <div class="page-container model-list">
-      <h1 style="color: aliceblue;">可浏览的 3D 模型</h1>
-      <div class="model-card" v-for="(model, index) in models" :key="index" @click="handleClick(model)">
-        <img :src="model.image" alt="模型预览图" class="model-img" />
-        <div class="model-info">
-          <h2>{{ model.name }}</h2>
-          <p>{{ model.description }}</p>
+  <div class="model-list-page">
+    <h1 class="page-title">可浏览的 3D 模型</h1>
+
+    <div class="model-list">
+      <el-card
+        class="model-card"
+        v-for="(model, index) in models"
+        :key="index"
+        shadow="hover"
+        @click="handleClick(model)"
+      >
+        <div class="model-content">
+          <!-- 若 image 存在则展示图片，否则显示 icon -->
+        <div class="model-thumb">
+          <img
+            v-if="model.image"
+            :src="model.image"
+            alt="预览图"
+            class="model-image"
+        />
+          <img
+            v-else
+            :src="model.placeholderImage"
+            alt="预览图"
+            class="model-image"
+          ></img>
         </div>
-      </div>
+          <div class="model-info">
+            <div class="model-name">{{ model.name }}</div>
+            <div class="model-desc">{{ model.description }}</div>
+          </div>
+        </div>
+      </el-card>
     </div>
-  </template>
+  </div>
+</template>
+
   
 <script setup>
-import router from '../router';
+  import router from '../router'
 
-const models = [
-  {
-    name: 'KFC楼体模型',
-    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
-    description: '一款展示KFC楼体结构的3D模型。',
-    route: '/models/rocket'
-  },
-  {
-    name: '钢铁侠 IronMan',
-    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
-    description: '钢铁侠贴图版 马克几号我也不晓得',
-    route: '/models/ironman' 
-  },
-  {
-    name: '小黄车 Yellow Car',
-    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
-    description: '一辆原地起飞的小黄车',
-    route: '/models/car' 
-  },
-  {
-    name: '设备模型 Charlie',
-    image: new URL('@/assets/images/model-alpha.png', import.meta.url).href,
-    description: '工业机械设备结构的简化模型。',
-    route: '/models/device' // 预留
-  }
-]
+  const models = [
+    {
+      name: 'KFC楼体模型',
+      image: '',
+      placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
+      description: '一款展示KFC楼体结构的3D模型。',
+      route: '/models/rocket'
+    },
+    {
+      name: '钢铁侠 IronMan',
+      image: '',
+      placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
+      description: '钢铁侠贴图版 马克几号我也不晓得',
+      route: '/models/ironman' 
+    },
+    {
+      name: '小黄车 Yellow Car',
+      image: '',
+      placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
+      description: '一辆原地起飞的小黄车',
+      route: '/models/car' 
+    },
+    {
+      name: '设备模型 Charlie',
+      image: '',
+      placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
+      description: '工业机械设备结构的简化模型。',
+      route: '/models/device'
+    }
+  ]
 
   function handleClick(model) {
-    // console.log(`点击了模型：${model.name}`)  
-    if(model.route){
+    if (model.route) {
       router.push(model.route)
-    } else {
-      console.log('点击了模型：${model.name}')
     }
   }
+
 </script>
   
-  <style scoped>
+<style scoped>
+  .model-list-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #143f3a, #4b676a);
+    border-radius: 20px;
+    min-height: 100vh;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #ffffff;
+  }
+
   .model-list {
-    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 10px;
+    gap: 20px;
   }
-  
+
   .model-card {
-    display: flex;
-    gap: 16px;
-    padding: 16px;
-    background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    cursor: pointer;
     transition: transform 0.2s ease;
-    min-width: 500px
+    cursor: pointer;
   }
+
   .model-card:hover {
     transform: translateY(-4px);
   }
-  
-  .model-img {
+
+  .model-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .model-image {
     width: 120px;
     height: 90px;
-    object-fit: cover;
+    object-fit: contain; /* ⚠️ 从 cover 改为 contain */
     border-radius: 8px;
-    background: #ddd;
+    background-color: #f0f0f0;
+    padding: 6px; /* 给图片留出边距 */
   }
-  
-  .model-info h2 {
-    font-size: 20px;
-    margin: 0 0 8px;
+
+  .model-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .model-info p {
-    margin: 0;
+
+  .model-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .model-desc {
     color: #666;
+    font-size: 14px;
   }
-  </style>
+  .model-thumb {
+  width: 120px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5;
+  border-radius: 8px;
+}
+
+
+</style>
   
