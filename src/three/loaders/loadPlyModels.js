@@ -70,10 +70,13 @@ export function loadPlyModels(urls, scene, options = {}) {
         const hasColor = geometry.hasAttribute('color')
         // 创建点材质
         const material = new THREE.PointsMaterial({
-          size: 0.02, // 点的大小
-          vertexColors: hasColor ? true : false, // 是否使用顶点颜色
-          transparent: true, // 启用透明度
-          opacity: 0.6 // 透明度值
+          size: 0.02,
+          vertexColors: hasColor? true: false,
+          transparent: true,
+          opacity: 0.8,
+          depthWrite: false,   // ✅ 关闭深度写入，避免透明遮挡问题
+          depthTest: true,     // ✅ 保持深度测试，正确遮挡排序
+          blending: THREE.NormalBlending // ✅ 使用默认混合模式，效果更稳定
         })
         // 为材质添加自定义数据，用于动画控制
         material.userData = {
@@ -89,6 +92,7 @@ export function loadPlyModels(urls, scene, options = {}) {
         mesh.userData.url = url                // 原始文件路径，后续跳转可用
         mesh.userData.displayName = fileName   // 卡片标题或自定义名称
         mesh.userData.originalColor = material.color.clone();   // 卡片标题或自定义名称
+        mesh.renderOrder = 1;
         meshes.push(mesh) // 将网格添加到数组中
 
         loadedCount++ // 增加已加载模型计数

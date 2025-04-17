@@ -28,7 +28,7 @@ export function createAdvancedScene(options = {}) {
   }
 
   // ✅ 4. 添加柔光环境灯
-  const ambient = new THREE.AmbientLight(0xffffff, 0.5)
+  const ambient = new THREE.AmbientLight(0xffffff, 1.5)
   scene.add(ambient)
 
   // ✅ 5. 添加方向光

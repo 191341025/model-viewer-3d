@@ -168,6 +168,9 @@
                 })
                 scene.add(group)
                 group.rotation.x = -Math.PI / 2;
+                // 手动首帧渲染一次，避免首帧延迟
+                renderer.render(scene, camera);
+
                 // 鼠标监听
                 renderer.domElement.addEventListener('mousemove', (event) => {
                     hoverEvent = event
@@ -335,7 +338,11 @@
             size: 0.02,
             vertexColors: true,
             transparent: true,
-            opacity: 0.6
+            opacity: 0.8,
+            depthWrite: false,   // ✅ 关闭深度写入，避免透明遮挡问题
+            depthTest: true,     // ✅ 保持深度测试，正确遮挡排序
+            blending: THREE.NormalBlending // ✅ 使用默认混合模式，效果更稳定
+            
         })
         mesh.material = newMat
         oldMat.dispose()
@@ -371,7 +378,7 @@
                 mesh.material.opacity = 0.01;
                 mesh.material.color.set('#888888'); // 👈 淡灰色
             } else {
-                mesh.material.opacity = 0.6;
+                mesh.material.opacity = 0.8;
 
                 // ✅ 用缓存的原始颜色恢复
                 const originalColor = mesh.userData.originalColor;
