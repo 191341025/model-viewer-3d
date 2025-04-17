@@ -2,21 +2,30 @@
     <div class="page-container">
         <div class="button-container">
             <h4 class="model-title">🚀 KFC模型展示页面</h4>
-            <button
-                class="interaction-toggle"
-                :class="{ active: interactionEnabled }"
-                @click="toggleInteraction"
-            >
-                {{ interactionEnabled ? '关闭交互' : '开启交互' }}
-            </button>
-            <!-- 添加其他按钮 -->
-            <button
-            class="interaction-toggle"
-            :class="{ active: mainPlyHidden }"
-            @click="toggleMainPlyVisibility"
-            >
-            {{ mainPlyHidden ? '恢复主楼层' : '隐藏主楼层' }}
-            </button>
+            <div class="switch-wrapper">
+                <span class="switch-label">交互功能</span>
+                <el-switch
+                v-model="interactionEnabled"
+                :active-value="true"
+                :inactive-value="false"
+                active-color="#00b4db"
+                inactive-color="#e6f2ff"
+                @change="toggleInteraction"
+                />
+            </div>
+
+            <div class="switch-wrapper">
+                <span class="switch-label">主体隐藏</span>
+                <el-switch
+                v-model="mainPlyHidden"
+                :active-value="true"
+                :inactive-value="false"
+                active-color="#00b4db"
+                inactive-color="#e6f2ff"
+                @change="toggleMainPlyVisibility"
+                />
+            </div>
+            
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
@@ -52,10 +61,10 @@
     let hoverEvent = null
     let needHoverCheck = false
     let mainPlyMesh = null; // 放到函数外面，全局用
-    let isMainPlyHidden = false;
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
     const mainPlyHidden = ref(false)
+    const interactionEnabled = ref(true)
     const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
@@ -73,10 +82,10 @@
     ]
     
 
-    const interactionEnabled = ref(true)
+    
 
-    function toggleInteraction() {
-        interactionEnabled.value = !interactionEnabled.value
+    function toggleInteraction(val) {
+        console.log('val:', val)
     }
 
     let scene, camera, renderer, animationId, controls
@@ -340,10 +349,10 @@
         oldMat.dispose()
     }
 
-    function toggleMainPlyVisibility() {
+    function toggleMainPlyVisibility(val) {
         if (!mainPlyMesh) return;
 
-        mainPlyHidden.value = !mainPlyHidden.value;
+        // mainPlyHidden.value = !mainPlyHidden.value;
 
         mainPlyMesh.material.transparent = true;
 
@@ -404,32 +413,19 @@
     .button-container {
         display: flex;
         justify-content: flex-start;
-        gap: 10px; /* 按钮之间的间距 */
+        gap: 20px; /* 按钮之间的间距 */
         margin-top: 5px;
     }
-    .interaction-toggle {
-        width: 120px; /* 设置按钮宽度 */
-        border-radius: 5px;
-        border: 1px solid #1e90ff;
-        background: white;
-        color: #1e90ff;
-        font-weight: bold;
-        transition: 0.3s;
-        font-size: 14px;
-    }
-    .interaction-toggle:hover {
-        background: #e6f2ff;
+
+    .switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     }
 
-    .interaction-toggle.active {
-        background: linear-gradient(to right, #00b4db, #0083b0);
-        color: white;
-        border-color: transparent;
-        box-shadow: 0 0 8px rgba(0, 183, 255, 0.6);
-    }
-
-    .interaction-toggle .icon {
-        font-size: 16px;
+    .switch-label {
+    font-weight: bold;
+    color: #fff;
     }
 
 </style>
