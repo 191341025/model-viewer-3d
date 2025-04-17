@@ -41,7 +41,7 @@
   <style scoped>
   .progress-container {
     position: fixed;
-    top: 120px;
+    top: 320px;
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
