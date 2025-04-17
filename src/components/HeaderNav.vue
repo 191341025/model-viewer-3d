@@ -73,9 +73,13 @@
   }
   
   .title {
-    font-size: 18px;
-    font-weight: 600;
+    white-space: nowrap;        /* ❗不换行 */
+    overflow: hidden;           /* ❗超出隐藏 */
+    text-overflow: ellipsis;    /* ❗显示省略号（...） */
+    max-width: 100%;            /* 可选：限制最大宽度 */
+    display: inline-block;      /* 可选：确保 ellipsis 生效 */
   }
+
   
   .nav-menu {
     border-bottom: none;
