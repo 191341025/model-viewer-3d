@@ -68,7 +68,7 @@
 
     let hoverEvent = null
     let needHoverCheck = false
-    let mainPlyMesh = null; // 放到函数外面，全局用
+    let mainPlyMesh = ref([]); // 放到函数外面，全局用
     const uiStore = useUiStore()
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
@@ -145,7 +145,7 @@
                 meshes.forEach((mesh, index) => {
                     // 在 meshes.forEach 里面加这个：
                     if (mesh.name.includes('main')) {
-                        mainPlyMesh = mesh;
+                        mainPlyMesh.value.push(mesh)
                     }
                     // console.log('加载成功:', mesh)
                     group.add(mesh)
@@ -362,22 +362,29 @@
     function toggleMainPlyVisibility(val) {
         if (!mainPlyMesh) return;
 
-        mainPlyMesh.material.transparent = true;
+        // 动画循环里只处理需要动画的 mesh
+        mainPlyMesh.value.forEach((mesh) => {
+            console.log('toggleMainPlyVisibility', mesh)
+            mesh.material.transparent = true;
 
-        if (mainPlyVisible.value) {
-            mainPlyMesh.material.opacity = 0.04;
-            mainPlyMesh.material.color.set('#888888'); // 👈 淡灰色
-        } else {
-            mainPlyMesh.material.opacity = 0.6;
+            if (mainPlyVisible.value) {
+                mesh.material.opacity = 0.01;
+                mesh.material.color.set('#888888'); // 👈 淡灰色
+            } else {
+                mesh.material.opacity = 0.6;
 
-            // ✅ 用缓存的原始颜色恢复
-            const originalColor = mainPlyMesh.userData.originalColor;
-            if (originalColor) {
-            mainPlyMesh.material.color.copy(originalColor);
+                // ✅ 用缓存的原始颜色恢复
+                const originalColor = mesh.userData.originalColor;
+                if (originalColor) {
+                    mesh.material.color.copy(originalColor);
+                }
             }
-        }
 
-        mainPlyMesh.material.needsUpdate = true;
+            mesh.material.needsUpdate = true;
+            
+        })
+
+        
     }
 
     
