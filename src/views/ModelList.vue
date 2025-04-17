@@ -40,6 +40,13 @@
 <script setup>
   import router from '../router'
 
+  import { useUiStore } from '@/stores/uiStore'
+
+  const uiStore = useUiStore()
+
+  // ✅ 回到模型列表时重置状态
+  uiStore.reset()
+
   const models = [
     {
       name: 'KFC楼体模型',

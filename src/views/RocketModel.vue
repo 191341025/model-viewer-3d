@@ -17,7 +17,7 @@
             <div class="switch-wrapper">
                 <span class="switch-label">主体隐藏</span>
                 <el-switch
-                v-model="mainPlyHidden"
+                v-model="mainPlyVisible"
                 :active-value="true"
                 :inactive-value="false"
                 active-color="#00b4db"
@@ -58,13 +58,21 @@
     import { createSmartProxyFromMesh, getAllSmartProxies } from '@/three/utils/interactionProxiesSmart'
     import InfoPopup from '@/components/InfoPopup.vue'
 
+    import { storeToRefs } from 'pinia'
+    import { useUiStore } from '@/stores/uiStore'
+    const uiStoress = useUiStore()
+    const { mainPlyVisible } = storeToRefs(uiStoress)
+    const { interactionEnabled } = storeToRefs(uiStoress)
+
+
     let hoverEvent = null
     let needHoverCheck = false
     let mainPlyMesh = null; // 放到函数外面，全局用
+    const uiStore = useUiStore()
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
-    const mainPlyHidden = ref(false)
-    const interactionEnabled = ref(false)
+    // const mainPlyHidden = ref(false)
+    // const interactionEnabled = ref(false)
     const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
@@ -164,6 +172,8 @@
                     hoverEvent = event
                     needHoverCheck = true
                 })
+
+                toggleMainPlyVisibility(mainPlyVisible.value)
 
                 fitCameraToObject(camera, controls, group, 1)
             },
@@ -351,11 +361,9 @@
     function toggleMainPlyVisibility(val) {
         if (!mainPlyMesh) return;
 
-        // mainPlyHidden.value = !mainPlyHidden.value;
-
         mainPlyMesh.material.transparent = true;
 
-        if (mainPlyHidden.value) {
+        if (mainPlyVisible.value) {
             mainPlyMesh.material.opacity = 0.04;
             mainPlyMesh.material.color.set('#888888'); // 👈 淡灰色
         } else {
