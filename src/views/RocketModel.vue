@@ -1,7 +1,7 @@
 <template>
     <div class="page-container">
         <div class="button-container">
-            <h4 class="model-title">KFC模型</h4>
+            <h4 class="model-title">{{ modelTitle }}</h4>
             <div class="switch-wrapper">
                 <span class="switch-label">交互功能</span>
                 <el-switch
@@ -44,6 +44,7 @@
 
 <script setup>
     import * as THREE from 'three'
+    import { useRoute } from 'vue-router'
     import { onMounted, ref, onBeforeUnmount, watch  } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
     // import { createSceneryBackground } from '@/three/effects/createSceneryBackground'
@@ -63,7 +64,7 @@
     const uiStoress = useUiStore()
     const { mainPlyVisible } = storeToRefs(uiStoress)
     const { interactionEnabled } = storeToRefs(uiStoress)
-
+    const route = useRoute()
 
     let hoverEvent = null
     let needHoverCheck = false
@@ -82,14 +83,9 @@
     const popupInfo = ref({ title: '', fields: {} })
     const popupStyle = ref({})
 
-    const urls = [
-        import.meta.env.BASE_URL + '/rocket/floor2.ply',
-        import.meta.env.BASE_URL + '/rocket/floor3.ply',
-        import.meta.env.BASE_URL + '/rocket/main.ply'
-        
-    ]
-    
-
+    let urls = []
+    // title 是普通字符串，无需 JSON.parse
+    const modelTitle = route.query.title || '未命名模型'
     
 
     function toggleInteraction(val) {
@@ -99,7 +95,12 @@
     let scene, camera, renderer, animationId, controls
 
     onMounted(() =>{
-
+        const raw = route.query.urls || '[]'
+        try {
+            urls = JSON.parse(raw)
+        } catch (err) {
+            console.error('URL解析失败:', err)
+        }
         //创建场景
         // scene = createDefaultScene()
         scene = createAdvancedScene({
@@ -149,7 +150,7 @@
                     // console.log('加载成功:', mesh)
                     group.add(mesh)
                     loadedMeshes.value.push(mesh)
-                    if (mesh.name.includes('floor2') || mesh.name.includes('floor3')) {
+                    if (!mesh.name.includes('main')) {
                         //✅ 加入后再生成包围盒中心
                         const proxy = createProxyFromMesh(mesh, {
                             scale: 0.8,

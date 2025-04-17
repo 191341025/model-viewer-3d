@@ -49,11 +49,17 @@
 
   const models = [
     {
-      name: 'KFC楼体模型',
+      name: 'KFC楼体',
       image: '',
       placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
       description: '一款展示KFC楼体结构的3D模型。',
-      route: '/models/rocket'
+      route: '/models/rocket',
+      urls:  [
+            import.meta.env.BASE_URL + '/rocket/floor2.ply',
+            import.meta.env.BASE_URL + '/rocket/floor3.ply',
+            import.meta.env.BASE_URL + '/rocket/main.ply'
+            
+        ]
     },
     {
       name: '钢铁侠 IronMan',
@@ -70,17 +76,42 @@
       route: '/models/car' 
     },
     {
-      name: '建筑模型 Building',
+      name: '建筑模型',
       image: '',
       placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
       description: 'Building模型。',
-      route: '/models/device'
+      route: '/models/rocket',
+      urls: [
+                import.meta.env.BASE_URL + '/buildings/main.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-a.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-b.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-c.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-d.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-e.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-f.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-g.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-h.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-i.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-j.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-k.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-l.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-m.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-n.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-o.ply'
+                
+            ]
     }
   ]
 
   function handleClick(model) {
     if (model.route) {
-      router.push(model.route)
+      router.push({
+        path: model.route,          // 比如 '/models/rocket'
+        query: {
+          urls: JSON.stringify(model.urls),  // 需要序列化
+          title: model.name // 👈 加上标题名（比如 'KFC模型'）
+        }
+      })
     }
   }
 
