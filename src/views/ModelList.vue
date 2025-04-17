@@ -97,7 +97,12 @@
                 import.meta.env.BASE_URL + '/buildings/F1-l.ply',
                 import.meta.env.BASE_URL + '/buildings/F1-m.ply',
                 import.meta.env.BASE_URL + '/buildings/F1-n.ply',
-                import.meta.env.BASE_URL + '/buildings/F1-o.ply'
+                import.meta.env.BASE_URL + '/buildings/F1-o.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-room1.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-room2.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-Hallway1.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-Hallway2.ply',
+                import.meta.env.BASE_URL + '/buildings/F1-wc.ply',
                 
             ]
     }
