@@ -20,7 +20,7 @@ export function loadGlbModel({
   onError = (err) => { console.error('GLB 加载失败:', err); }
 }) {
   const loader = new GLTFLoader();
-
+  let loadedCount = 0
   loader.load(
     path,
     (gltf) => {
@@ -30,11 +30,12 @@ export function loadGlbModel({
       model.rotation.set(rotate.x, rotate.y, rotate.z)
       onLoad(model);
     },
-    (xhr) => {
-      // xhr.loaded / xhr.total 可能为 NaN，因此先做判断
-      if (xhr.total && xhr.lengthComputable) {
-        const progress = xhr.loaded / xhr.total;
-        onProgress(progress);
+    xhr => {
+      // 如果需要实时展示进度条的加载动画
+      if (xhr.lengthComputable) {
+        const realProgress = xhr.loaded / xhr.total // 计算当前文件的加载进度
+        const totalPercent = ((loadedCount + realProgress) / 1) * 100// 计算总进度
+        onProgress(totalPercent) // 调用进度回调函数
       }
     },
     onError

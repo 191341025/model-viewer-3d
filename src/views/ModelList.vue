@@ -63,10 +63,10 @@
       route: '/models/car' 
     },
     {
-      name: '设备模型 Charlie',
+      name: '建筑模型 Building',
       image: '',
       placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
-      description: '工业机械设备结构的简化模型。',
+      description: 'Building模型。',
       route: '/models/device'
     }
   ]

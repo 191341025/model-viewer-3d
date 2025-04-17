@@ -49,8 +49,8 @@
         // scene = createDefaultScene()
         scene = createAdvancedScene({
         enableGradientBg: true,
-        gradientColors: ['#02030f', '#0e1b33'],
-        enableStars: true,
+        gradientColors: ['#FFEFD5', '#CD853F'],
+        enableStars: false,
         enableFog: false,
         fogColor: '#003366',
         fogNear: 30,

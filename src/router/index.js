@@ -5,6 +5,7 @@ import ModelList from '../views/ModelList.vue'
 import IronMan from '../views/IronManModel.vue'
 import Rocket from '../views/RocketModel.vue'
 import Car from '../views/CarModel.vue'
+import Device from '../views/DeviceModel.vue'
 import ModelDetail from '../views/ModelDetail.vue'
 
 const routes = [
@@ -29,6 +30,11 @@ const routes = [
     path: '/models/car',
     name: 'CarModel',
     component: Car
+  },
+  {
+    path: '/models/device',
+    name: 'DeviceModel',
+    component: Device
   },
   {
     path: '/model-detail',

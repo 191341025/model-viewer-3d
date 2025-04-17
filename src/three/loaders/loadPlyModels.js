@@ -38,7 +38,7 @@ export function loadPlyModels(urls, scene, options = {}) {
         geometry.computeVertexNormals()
 
         // 检查是否需要为模型添加动画效果（例如 floor2、floor3）
-        const isAnimated = url.includes('floor2') || url.includes('floor3')
+        const isAnimated = !url.includes('main')
 
         if (isAnimated) {
           const drawRatio = 1 // 绘制比例（例如 50% 的点）
@@ -71,11 +71,9 @@ export function loadPlyModels(urls, scene, options = {}) {
         // 创建点材质
         const material = new THREE.PointsMaterial({
           size: 0.02, // 点的大小
-          // vertexColors: hasColor ? true : false, // 是否使用顶点颜色
-          vertexColors: false,
-          color: new THREE.Color(0xffcc88),
+          vertexColors: hasColor ? true : false, // 是否使用顶点颜色
           transparent: true, // 启用透明度
-          opacity: 0.7 // 透明度值
+          opacity: 0.6 // 透明度值
         })
         // 为材质添加自定义数据，用于动画控制
         material.userData = {
@@ -94,8 +92,8 @@ export function loadPlyModels(urls, scene, options = {}) {
         meshes.push(mesh) // 将网格添加到数组中
 
         loadedCount++ // 增加已加载模型计数
-        const percent = loadedCount / urls.length // 计算加载进度百分比
-        options.onProgress?.(percent * 100) // 调用进度回调函数
+        // const percent = loadedCount / urls.length // 计算加载进度百分比
+        // options.onProgress?.(percent * 100) // 调用进度回调函数
 
         // 如果所有模型都已加载完成，调用 onLoad 回调
         if (loadedCount === urls.length) {
@@ -106,7 +104,7 @@ export function loadPlyModels(urls, scene, options = {}) {
         // 如果需要实时展示进度条的加载动画
         if (xhr.lengthComputable) {
           const realProgress = xhr.loaded / xhr.total // 计算当前文件的加载进度
-          const totalPercent = (loadedCount + realProgress) / urls.length // 计算总进度
+          const totalPercent = ((loadedCount + realProgress) / urls.length) * 100// 计算总进度
           options.onProgress?.(totalPercent) // 调用进度回调函数
         }
       },

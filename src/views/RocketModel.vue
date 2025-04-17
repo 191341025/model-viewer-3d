@@ -64,7 +64,7 @@
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
     const mainPlyHidden = ref(false)
-    const interactionEnabled = ref(true)
+    const interactionEnabled = ref(false)
     const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
@@ -96,8 +96,8 @@
         // scene = createDefaultScene()
         scene = createAdvancedScene({
         enableGradientBg: true,
-        gradientColors: ['#02030f', '#0e1b33'],
-        enableStars: true,
+        gradientColors: ['#FFEFD5', '#CD853F'],
+        enableStars: false,
         enableFog: false,
         fogColor: '#003366',
         fogNear: 30,
@@ -322,10 +322,9 @@
         const oldMat = mesh.material
         const newMat = new THREE.PointsMaterial({
             size: 0.02,
-            vertexColors: false,
-            color: new THREE.Color(0xffcc88),
+            vertexColors: true,
             transparent: true,
-            opacity: 0.7
+            opacity: 0.6
         })
         mesh.material = newMat
         oldMat.dispose()
@@ -360,7 +359,7 @@
             mainPlyMesh.material.opacity = 0.04;
             mainPlyMesh.material.color.set('#888888'); // 👈 淡灰色
         } else {
-            mainPlyMesh.material.opacity = 1;
+            mainPlyMesh.material.opacity = 0.6;
 
             // ✅ 用缓存的原始颜色恢复
             const originalColor = mainPlyMesh.userData.originalColor;

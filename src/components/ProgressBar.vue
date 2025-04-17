@@ -25,7 +25,7 @@
       const percent = Math.min(newVal * 100, 100)
       currentProgress.value = newVal
 
-      if (percent >= 100) {
+      if (percent >= 95) {
         setTimeout(() => {
           visible.value = false
         }, 500)

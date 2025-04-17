@@ -23,6 +23,7 @@ export function loadObjMtlModel(objUrl, mtlUrl, scene, options = {}) {
 
   let mtlProgress = 0
   let objProgress = 0
+  let loadedCount = 0
 
   const updateProgress = () => {
     const total = (mtlProgress + objProgress) / 2
@@ -30,6 +31,7 @@ export function loadObjMtlModel(objUrl, mtlUrl, scene, options = {}) {
   }
 
   const mtlLoader = new MTLLoader()
+  
   mtlLoader.load(mtlUrl, materials => {
     
     mtlProgress = 1
@@ -42,8 +44,8 @@ export function loadObjMtlModel(objUrl, mtlUrl, scene, options = {}) {
     objLoader.load(
       objUrl,
       object => {
-        objProgress = 1
-        updateProgress() // 👈 保证最终 total === 1
+        // objProgress = 1
+        // updateProgress() // 👈 保证最终 total === 1
 
         object.position.set(position.x, position.y, position.z)
         object.scale.set(scale.x, scale.y, scale.z)
@@ -56,9 +58,11 @@ export function loadObjMtlModel(objUrl, mtlUrl, scene, options = {}) {
         onLoad(object)
       },
       xhr => {
+        // 如果需要实时展示进度条的加载动画
         if (xhr.lengthComputable) {
-          objProgress = xhr.loaded / xhr.total
-          updateProgress()
+          const realProgress = xhr.loaded / xhr.total // 计算当前文件的加载进度
+          const totalPercent = ((loadedCount + realProgress) / 1) * 100// 计算总进度
+          options.onProgress?.(totalPercent) // 调用进度回调函数
         }
       },
       error => {
