@@ -179,7 +179,7 @@
 
                 toggleMainPlyVisibility(mainPlyVisible.value)
 
-                fitCameraToObject(camera, controls, group, 1)
+                fitCameraToObject(camera, controls, group, 1.3)
             },
             onError: (err, url) => {
                 console.error('加载失败：', url, err)
@@ -211,7 +211,7 @@
                     mat.userData.time += 0.02 * mat.userData.speed
                     const pulse = (Math.sin(mat.userData.time) + 1) / 2
                     // mat.color.setRGB(0.0, pulse * 0.5 + 0.1, 1.0)
-                    mat.color.setRGB(0.0, 0.5 + 0.5 * pulse, 0.5 + 0.5 * pulse) // 亮青色
+                    mat.color.setRGB(0.3, 0.5 + 0.5 * pulse, 0.5 + 0.5 * pulse) // 亮青色
                     mat.opacity = 0.2 + 0.7 * pulse
                     mat.needsUpdate = true
                 }
