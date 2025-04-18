@@ -588,7 +588,7 @@
         toggleMainPlyVisibility(mainPlyVisible.value)
         console.log(levelNumber.value)
         if(levelNumber.value == 0){
-            fitCameraToObject(camera, controls, group, 1.3)
+            fitCameraToObject(camera, controls, group, 1)
         } else {
             fitCameraToObject(camera, controls, group, 0.8)
         }
