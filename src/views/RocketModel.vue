@@ -25,7 +25,7 @@
                 @change="toggleMainPlyVisibility"
                 />
             </div>
-            <button class="back-btn" @click="goBackOneLevel">⬅ 上层 L:{{ levelNumber + 1 }}</button>
+            <button class="back-btn" @click="goBackOneLevel">⬅ 去上层 当前Lv:{{ levelNumber + 1 }}</button>
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
