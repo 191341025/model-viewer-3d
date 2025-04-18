@@ -84,7 +84,6 @@
       urls: [
                 import.meta.env.BASE_URL + '/buildings/F1-overall.ply',
                 import.meta.env.BASE_URL + '/buildings/F2-overall.ply',
-                import.meta.env.BASE_URL + '/buildings/Stair-cass.ply',
                 import.meta.env.BASE_URL + '/buildings/22-main-structure.ply'
             ]
     }
