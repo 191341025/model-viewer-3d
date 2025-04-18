@@ -93,7 +93,8 @@
             import.meta.env.BASE_URL + '/buildings/F1-room2.ply',
             import.meta.env.BASE_URL + '/buildings/F1-Hallway1.ply',
             import.meta.env.BASE_URL + '/buildings/F1-Hallway2.ply',
-            import.meta.env.BASE_URL + '/buildings/F1-wc.ply'
+            import.meta.env.BASE_URL + '/buildings/F1-wc.ply',
+            import.meta.env.BASE_URL + '/buildings/Stair-cass.ply',
         ],
         'F2-overall': [
             import.meta.env.BASE_URL + '/buildings/F2-main.ply',
