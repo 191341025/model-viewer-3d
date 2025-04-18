@@ -515,12 +515,6 @@
 
     function handleModelLoad(meshes){
         meshes.forEach((mesh, index) => {
-            mesh.material = mesh.material.clone()
-            mesh.material.userData = {
-            time: 0,
-            speed: 4,
-            }
-
             // 在 meshes.forEach 里面加这个：
             if (mesh.name.includes('main')) {
                 mainPlyMesh.value.push(mesh)
