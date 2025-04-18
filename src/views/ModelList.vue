@@ -122,7 +122,8 @@
     padding: 40px 20px;
     background: linear-gradient(135deg, #143f3a, #4b676a);
     border-radius: 20px;
-    min-height: 100vh;
+    height: 100%;
+    overflow-y:auto
   }
 
   .page-title {
