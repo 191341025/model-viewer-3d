@@ -10,21 +10,16 @@ export const useThreeSceneStore = defineStore('threeScene', {
     controls: null,
     animationId: null,
     isModelLoaded: false,
-    shouldCleanup: true,
-    // ✅ 加入这些
-    loadedMeshes: [],
-    hoveredMesh: null
+    shouldCleanup: true
   }),
 
   actions: {
-    setThreeRefs({ renderer, scene, camera, controls, animationId, loadedMeshes, hoveredMesh }) {
+    setThreeRefs({ renderer, scene, camera, controls, animationId }) {
       this.renderer = renderer;
       this.scene = scene;
       this.camera = camera;
       this.controls = controls;
       this.animationId = animationId;
-      this.loadedMeshes = loadedMeshes
-      this.hoveredMesh = hoveredMesh
     },
 
     markLoaded() {
@@ -37,8 +32,6 @@ export const useThreeSceneStore = defineStore('threeScene', {
       this.camera = null;
       this.controls = null;
       this.animationId = null;
-      this.loadedMeshes = []
-      this.hoveredMesh = null
       this.isModelLoaded = false;
     },
 

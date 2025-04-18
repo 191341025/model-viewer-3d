@@ -25,7 +25,8 @@
                 @change="toggleMainPlyVisibility"
                 />
             </div>
-            
+            <button @click="switchModel(model1)">加载模型 A</button>
+            <button @click="switchModel(model2)">加载模型 B</button>
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
@@ -47,13 +48,13 @@
     import { useRoute } from 'vue-router'
     import { onMounted, ref, onBeforeUnmount, watch  } from 'vue';
     import { createDefaultScene } from '@/three/scenes/createDefaultScene'
-    // import { createSceneryBackground } from '@/three/effects/createSceneryBackground'
-    import { createAdvancedScene } from '@/three/scenes/createAdvancedScene'
-    import { initCamera } from '@/three/camera/initCamera'
-    import { initRenderer } from '@/three/renderer/initRenderer'
-    import { initOrbitControls } from '@/three/controls/initOrbitControls'
-    import { loadPlyModels } from '@/three/loaders/loadPlyModels'
     import { cleanupThree } from '@/three/utils/cleanupThree'
+
+    import { createSceneBundle } from '@/three/utils/createSceneBundle'
+    import { loadModelAndInitEvents } from '@/three/utils/loadModelAndInitEvents'
+    import { startAnimateLoop } from '@/three/utils/animate'
+
+
     import ProgressBar from '@/components/ProgressBar.vue'
     import { createProxyFromMesh, getAllProxies } from '@/three/utils/interactionProxies'
     import { createSmartProxyFromMesh, getAllSmartProxies } from '@/three/utils/interactionProxiesSmart'
@@ -61,6 +62,9 @@
 
     import { storeToRefs } from 'pinia'
     import { useUiStore } from '@/stores/uiStore'
+    import { useThreeSceneStore } from '@/stores/threeScene'
+
+    const sceneStore = useThreeSceneStore()
     
     const uiStoress = useUiStore()
     const { mainPlyVisible } = storeToRefs(uiStoress)
@@ -84,115 +88,26 @@
     const popupInfo = ref({ title: '', fields: {} })
     const popupStyle = ref({})
 
+    const model1 = [
+        import.meta.env.BASE_URL + '/buildings/F1-room1.ply',
+    ]
+    const model2 = [
+    import.meta.env.BASE_URL + '/buildings/F1-Hallway1.ply',
+        ]
+
     let urls = []
     // title 是普通字符串，无需 JSON.parse
     const modelTitle = route.query.title || '未命名模型'
+
+    let scene, camera, renderer, controls, animationId, group
     
 
     function toggleInteraction(val) {
-        console.log('val:', val)
     }
 
-    let scene, camera, renderer, animationId, controls
-
-    onMounted(() =>{
-        const raw = route.query.urls || '[]'
-        try {
-            urls = JSON.parse(raw)
-        } catch (err) {
-            console.error('URL解析失败:', err)
-        }
-        //创建场景
-        // scene = createDefaultScene()
-        scene = createAdvancedScene({
-        enableGradientBg: true,
-        gradientColors: ['#FFEFD5', '#CD853F'],
-        enableStars: false,
-        enableFog: false,
-        fogColor: '#003366',
-        fogNear: 30,
-        fogFar: 200,
-        enableMirrorFloor: false,
-        enableDustParticles: false
-        })
-
-        // createSceneryBackground(scene, {
-        // count: 30,
-        // area: 600,
-        // minSize: 10,
-        // maxSize: 30,
-        // types: ['box', 'cone', 'sphere'],
-        // colorPalette: ['#cccccc', '#999999', '#aaaaaa']
-        // })
-
-
-        //创建相机
-        camera = initCamera(canvasContainer.value)
-
-        // 创建渲染器
-        renderer = initRenderer(canvasContainer.value)
-
-        controls = initOrbitControls(camera, renderer.domElement)
-        controls.minPolarAngle = 0;                // 最小仰角（默认值是 0）
-        controls.maxPolarAngle = Math.PI;          // 最大仰角，从 π/2 扩大到 π
-
-
-        const group = new THREE.Group()
-
-        // ✅ 在这里加载 ply 模型
-        loadPlyModels(urls, scene, {
-            onProgress: p => loadProgress.value = p,
-            onLoad: (meshes) => {
-                meshes.forEach((mesh, index) => {
-                    // 在 meshes.forEach 里面加这个：
-                    if (mesh.name.includes('main')) {
-                        mainPlyMesh.value.push(mesh)
-                    }
-                    // console.log('加载成功:', mesh)
-                    group.add(mesh)
-                    loadedMeshes.value.push(mesh)
-                    if (!mesh.name.includes('main')) {
-                        //✅ 加入后再生成包围盒中心
-                        const proxy = createProxyFromMesh(mesh, {
-                            scale: 0.8,
-                            offsetY: 0.1,
-                            opacity: 0.0 // 先可见便于调试
-                        })
-                        // const proxy = createSmartProxyFromMesh(mesh, {
-                        //     useGeometryProxy: false,      // ✅ 贴合形状
-                        //     offsetY: 0.0,
-                        //     opacity: 0.0,
-                        //     color: 0x00ffff
-                        // })
-                        group.add(proxy)
-                    }
-                })
-                scene.add(group)
-                group.rotation.x = -Math.PI / 2;
-                // 手动首帧渲染一次，避免首帧延迟
-                renderer.render(scene, camera);
-
-                // 鼠标监听
-                renderer.domElement.addEventListener('mousemove', (event) => {
-                    hoverEvent = event
-                    needHoverCheck = true
-                })
-
-                toggleMainPlyVisibility(mainPlyVisible.value)
-
-                fitCameraToObject(camera, controls, group, 1.3)
-            },
-            onError: (err, url) => {
-                console.error('加载失败：', url, err)
-            }
-        })
-        // 5. 监听窗口变化，自适应画布
-        window.addEventListener('resize', onWindowResize)
-        let i = 0;
-        // 4. 动画渲染循环
-        const animate = () => {
-            animationId = requestAnimationFrame(animate)
-
+    // 4. 动画渲染循环
+    const animateFn = () => {
+            if (!renderer || !scene || !camera) return // ✅ 防御式写法
             // 动画循环里只处理需要动画的 mesh
             loadedMeshes.value.forEach((mesh) => {
                 const geo = mesh.geometry
@@ -252,31 +167,82 @@
                     }
                 }
             }
-            
-
-
-            renderer.render(scene, camera)
-            controls?.update()
         }
+
+    const switchModel = (modelUrls) => {
         
-        animate()
+        cleanupThree({
+            renderer,
+            scene,
+            controls,
+            animationId,
+            resizeHandler: onWindowResize
+        })
+        
+        const newScene = createSceneBundle(canvasContainer.value)
+        scene = newScene.scene
+        camera = newScene.camera
+        renderer = newScene.renderer
+        controls = newScene.controls
 
-        let clickStart = { x: 0, y: 0 };
+        group = new THREE.Group();
+        loadModelAndInitEvents({
+            urls: modelUrls,
+            scene,
+            group,
+            canvas: renderer.domElement,
+            onProgress: (p) => loadProgress.value = p,
+            onLoad: (meshes) => handleModelLoad(meshes),
+            onError: (err, url) => console.error('加载失败：', url, err),
+            clickHandler: handleCanvasClick
+        })
+        canvasContainer.value.appendChild(renderer.domElement)
+        startAnimateLoop({
+            scene,
+            camera,
+            renderer,
+            controls,
+            animateFn: animateFn // ⬅️ 只包含 breathing 动效等更新逻辑
+        })
+        window.addEventListener('resize', onWindowResize)
+    }
 
-            renderer.domElement.addEventListener('mousedown', (event) => {
-                clickStart = { x: event.clientX, y: event.clientY };
-            });
+    
+    onMounted(() =>{
+        const raw = route.query.urls || '[]'
+        try {
+            urls = JSON.parse(raw)
+        } catch (err) {
+            console.error('URL解析失败:', err)
+        }
+        const newScene = createSceneBundle(canvasContainer.value)
+        scene = newScene.scene
+        camera = newScene.camera
+        renderer = newScene.renderer
+        controls = newScene.controls
 
-            renderer.domElement.addEventListener('mouseup', (event) => {
-            const dx = event.clientX - clickStart.x;
-            const dy = event.clientY - clickStart.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+        group = new THREE.Group()
+        group.rotation.x = -Math.PI / 2;
+        loadModelAndInitEvents({
+            urls: JSON.parse(route.query.urls || '[]'),
+            scene,
+            group,
+            canvas: renderer.domElement,
+            onProgress: (p) => loadProgress.value = p,
+            onLoad: (meshes) => handleModelLoad(meshes),
+            onError: (err, url) => console.error('加载失败：', url, err),
+            clickHandler: handleCanvasClick
+        })
+        canvasContainer.value.appendChild(renderer.domElement)
 
-            // 拖动距离小于3像素才判定为点击
-            if (distance < 3) {
-                handleCanvasClick(event); // 你之前的 click 逻辑
-            }
-        });
+        animationId = startAnimateLoop({
+            scene,
+            camera,
+            renderer,
+            controls,
+            animateFn: animateFn
+        })
+        window.addEventListener('resize', onWindowResize)
 
     })
 
@@ -335,7 +301,7 @@
         const center = box.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
 
-        center.y += -5.5 // 整体抬高模型焦点
+        center.y += -3.5 // 整体抬高模型焦点
 
         // ✅ 设置相机初始角度（斜前方视角）
         camera.position.copy(center.clone().add(new THREE.Vector3(10, 5, maxDim * offset)))
@@ -387,7 +353,6 @@
 
         // 动画循环里只处理需要动画的 mesh
         mainPlyMesh.value.forEach((mesh) => {
-            console.log('toggleMainPlyVisibility', mesh)
             mesh.material.transparent = true;
 
             if (mainPlyVisible.value) {
@@ -406,17 +371,48 @@
             mesh.material.needsUpdate = true;
             
         })
-
-        
     }
 
-    
+    function handleModelLoad(meshes){
+        meshes.forEach((mesh, index) => {
+            // 在 meshes.forEach 里面加这个：
+            if (mesh.name.includes('main')) {
+                mainPlyMesh.value.push(mesh)
+            }
+            // console.log('加载成功:', mesh)
+            group.add(mesh)
+            loadedMeshes.value.push(mesh)
+            if (!mesh.name.includes('main')) {
+                //✅ 加入后再生成包围盒中心
+                const proxy = createProxyFromMesh(mesh, {
+                    scale: 0.8,
+                    offsetY: 0.1,
+                    opacity: 0.0 // 先可见便于调试
+                })
+                // const proxy = createSmartProxyFromMesh(mesh, {
+                //     useGeometryProxy: false,      // ✅ 贴合形状
+                //     offsetY: 0.0,
+                //     opacity: 0.0,
+                //     color: 0x00ffff
+                // })
+                group.add(proxy)
+            }
+        })
+        scene.add(group)
+        group.rotation.x = -Math.PI / 2;
+        // 手动首帧渲染一次，避免首帧延迟
+        renderer.render(scene, camera);
 
+        // 鼠标监听
+        renderer.domElement.addEventListener('mousemove', (event) => {
+            hoverEvent = event
+            needHoverCheck = true
+        })
 
+        toggleMainPlyVisibility(mainPlyVisible.value)
 
-
-
-
+        fitCameraToObject(camera, controls, group, 1.3)
+    }
 </script>
 
 <style scoped>
