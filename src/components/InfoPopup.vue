@@ -12,7 +12,7 @@
       </div>
       <div class="popup-footer" v-if="info.jump">
         <button class="detail-btn" @click="goToDetail(info)">查看详情 →</button>
-        <button class="load-btn" @click="loadHere(info)">当前加载</button>
+        <!-- <button class="load-btn" @click="loadHere(info)">当前加载</button> -->
       </div>
     </div>
   </div>
