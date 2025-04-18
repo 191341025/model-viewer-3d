@@ -133,6 +133,7 @@
     const { mainPlyVisible } = storeToRefs(uiStores)
     const { interactionEnabled } = storeToRefs(uiStores)
     const { modelHistory } = storeToRefs(uiStores)
+    const { levelNumber } = storeToRefs(uiStores)
     const route = useRoute()
 
     let hoverEvent = null
@@ -264,7 +265,7 @@
             onProgress: (p) => loadProgress.value = p,
             onLoad: (meshes) => handleModelLoad(meshes),
             onError: (err, url) => console.error('加载失败：', url, err),
-            clickHandler: handleCanvasClick
+            clickHandler: levelNumber.value == 1? handleCanvasClick : handleCanvasClickUnPop
         })
         canvasContainer.value.appendChild(renderer.domElement)
         startAnimateLoop({
@@ -284,8 +285,9 @@
         // ✅ 将当前模型压入历史记录
         if (currentModelUrls.value.length > 0) {
             modelHistory.value.push(currentModelUrls.value)
+            levelNumber.value +=1;
         }
-
+        
         // ✅ 更新当前模型
         currentModelUrls.value = urlsToLoad
 
@@ -298,19 +300,21 @@
         // ✅ 将当前模型压入历史记录
         if (currentModelUrls.value.length > 0) {
             modelHistory.value.push(currentModelUrls.value)
+            levelNumber.value +=1;
         }
         // ✅ 更新当前模型
         currentModelUrls.value = urlsToLoad
     }
 
     const goBackOneLevel = () => {
-        console.log(route.query.urls)
         if (modelHistory.value.length > 0) {
             const previousUrls = modelHistory.value.pop()
-
             // ✅ 更新当前模型引用
             currentModelUrls.value = previousUrls
-
+            levelNumber.value -=1
+            if(levelNumber.value < 0){
+                levelNumber.value = 0
+            }
             // ✅ 调用加载逻辑
             switchModel(previousUrls)
         } else {
@@ -320,12 +324,17 @@
             } catch (err) {
                 console.error('URL解析失败:', err)
             }
+            levelNumber.value = 0
             switchModel(urls)
         }
     }
 
     
     onMounted(() =>{
+        levelNumber.value -=1
+        if(levelNumber.value < 0){
+                levelNumber.value = 0
+            }
         const raw = route.query.urls || '[]'
         try {
             urls = JSON.parse(raw)
@@ -358,7 +367,7 @@
                 onProgress: (p) => loadProgress.value = p,
                 onLoad: (meshes) => handleModelLoad(meshes),
                 onError: (err, url) => console.error('加载失败：', url, err),
-                clickHandler: handleCanvasClick
+                clickHandler: levelNumber.value == 2? handleCanvasClick : handleCanvasClickUnPop
             })
             canvasContainer.value.appendChild(renderer.domElement)
 
@@ -394,6 +403,35 @@
         })
     })
 
+    function handleCanvasClickUnPop(event){
+        if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
+        levelNumber.value +=1;
+        const rect = renderer.domElement.getBoundingClientRect()
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+        raycaster.setFromCamera(mouse, camera)
+
+        const intersects = raycaster.intersectObjects(getAllProxies().filter(p => p.userData.isProxy), false)
+        let modelUrls = []
+        if (intersects.length > 0) {
+            const mesh = intersects[0].object
+            const modelKey = mesh.name
+            const hasChildren = modelUrlMap[modelKey] !== undefined
+            if (hasChildren) {
+                modelUrls = modelUrlMap[modelKey]
+            } else {
+                modelUrls = [mesh.userData.url]
+            }
+            // ✅ 将当前模型压入历史记录
+            if (currentModelUrls.value.length > 0) {
+                modelHistory.value.push(currentModelUrls.value)
+                levelNumber.value +=1;
+            }
+            // ✅ 更新当前模型
+            currentModelUrls.value = modelUrls
+            switchModel(modelUrls) // ✅ 你现有的切换模型逻辑
+        } 
+    }
     function handleCanvasClick(event) {
         if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
             const rect = renderer.domElement.getBoundingClientRect()
@@ -551,8 +589,13 @@
         })
 
         toggleMainPlyVisibility(mainPlyVisible.value)
-
-        fitCameraToObject(camera, controls, group, 1.3)
+        console.log(levelNumber.value)
+        if(levelNumber.value == 0){
+            fitCameraToObject(camera, controls, group, 1.3)
+        } else {
+            fitCameraToObject(camera, controls, group, 0.8)
+        }
+        
     }
 </script>
 
