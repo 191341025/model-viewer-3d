@@ -53,7 +53,7 @@
       image: '',
       placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
       description: '一款展示KFC楼体结构的3D模型。',
-      route: '/models/rocket',
+      route: '/models/building',
       urls:  [
             import.meta.env.BASE_URL + '/rocket/floor2.ply',
             import.meta.env.BASE_URL + '/rocket/floor3.ply',
@@ -75,17 +75,29 @@
       description: '一辆原地起飞的小黄车',
       route: '/models/car' 
     },
+    // {
+    //   name: '建筑模型',
+    //   image: '',
+    //   placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
+    //   description: 'Building模型。',
+    //   route: '/models/rocket',
+    //   urls: [
+    //             import.meta.env.BASE_URL + '/buildings/F1-overall.ply',
+    //             import.meta.env.BASE_URL + '/buildings/F2-overall.ply',
+    //             import.meta.env.BASE_URL + '/buildings/22-main-structure.ply'
+    //         ]
+    // },
     {
       name: '建筑模型',
       image: '',
       placeholderImage: new URL('@/assets/images/3d.png', import.meta.url).href,
       description: 'Building模型。',
-      route: '/models/rocket',
+      route: '/models/building',
       urls: [
-                import.meta.env.BASE_URL + '/buildings/F1-overall.ply',
-                import.meta.env.BASE_URL + '/buildings/F2-overall.ply',
-                import.meta.env.BASE_URL + '/buildings/22-main-structure.ply'
-            ]
+        import.meta.env.BASE_URL + '/buildings/F1-overall.ply',
+        import.meta.env.BASE_URL + '/buildings/F2-overall.ply',
+        import.meta.env.BASE_URL + '/buildings/22-main-structure.ply'
+      ]
     }
   ]
 

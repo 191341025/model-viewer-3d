@@ -2,7 +2,6 @@ import { loadPlyModels } from '@/three/loaders/loadPlyModels'
 export function loadModelAndInitEvents({
     urls,
     scene,
-    group,
     canvas,
     onLoad,
     onError,

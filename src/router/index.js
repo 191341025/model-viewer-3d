@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import ModelList from '../views/ModelList.vue'
 import IronMan from '../views/IronManModel.vue'
+import Building from '../views/BuildingModel.vue'
 import Rocket from '../views/RocketModel.vue'
 import Car from '../views/CarModel.vue'
 import ModelDetail from '../views/ModelDetail.vue'
@@ -34,6 +35,11 @@ const routes = [
     path: '/model-detail',
     name: 'ModelDetail',
     component: ModelDetail
+  },
+  {
+    path: '/models/building',
+    name: 'Building',
+    component: Building
   }
   
 ]

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" class="progress-container">
+    <div v-if="props.visible" class="progress-container">
       <div class="progress-message">
         Loading 3D Model {{ Math.floor(currentProgress) }}%
       </div>
@@ -10,30 +10,23 @@
   </template>
   
   <script setup>
-  import { ref, watch, onMounted } from 'vue'
-  
-  const props = defineProps({
-    progress: Number
-  })
-  
-  const currentProgress = ref(0)
-  const visible = ref(true)
-  
-  watch(
-    () => props.progress,
-    (newVal) => {
-      const percent = Math.min(newVal * 100, 100)
-      currentProgress.value = newVal
+  import {ref, watch} from 'vue'
 
-      if (percent >= 95) {
-        setTimeout(() => {
-          visible.value = false
-        }, 500)
-      } else {
-        visible.value = true
-      }
-    },
-    { immediate: true } // ✅ 确保初次加载也触发
+  const props = defineProps({
+    progress: Number,
+    visible: Boolean
+  })
+
+  const emit = defineEmits(['update:visible']) // 支持 v-model:visible
+  const currentProgress = ref(0)
+
+  // 当进度变化时内部跟进，但不再自己决定 visible
+  watch(
+      () => props.progress,
+      (newVal) => {
+        currentProgress.value = Math.min(newVal * 100, 100)
+      },
+      { immediate: true }
   )
 
   </script>

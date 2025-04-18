@@ -53,10 +53,16 @@ html, body, #app {
   .model-title {
     margin: 0;
     padding: 0;
-    font-size: 24px;
-    line-height: 1.2;
+    font-size: 20px;
     font-weight: 600;
+    line-height: 1; /* ✅ 行高为字体高度 */
+    display: inline-block; /* ✅ 去掉块级默认垂直撑开 */
+    vertical-align: middle; /* ✅ 保证和 switch 保持对齐 */
     color: #bccfbd;
+    white-space: nowrap;        /* ❗不换行 */
+    overflow: hidden;           /* ❗超出隐藏 */
+    text-overflow: ellipsis;    /* ❗显示省略号（...） */
+    max-width: 100%;            /* 可选：限制最大宽度 */
   }
 
   /* 必须是全局样式！不要 scoped！ */

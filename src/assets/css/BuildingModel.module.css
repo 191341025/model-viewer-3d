@@ -1,0 +1,46 @@
+.canvasContainer {
+    width: calc(100vw - 30px);
+    height: calc(100vh - 100px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; /* ✅ 保证子元素垂直居中 */
+    gap: 20px; /* 按钮之间的间距 */
+    margin-top: 5px;
+}
+
+.switchWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.switchLabel {
+    font-weight: bold;
+    white-space: nowrap;        /* ❗不换行 */
+    overflow: hidden;           /* ❗超出隐藏 */
+    text-overflow: ellipsis;    /* ❗显示省略号（...） */
+    max-width: 100%;            /* 可选：限制最大宽度 */
+    display: inline-block;      /* 可选：确保 ellipsis 生效 */
+    color: #fff;
+}
+
+.backBtn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: none;
+    background-color: #409eff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.backBtn:hover {
+    background-color: #66b1ff;
+}
