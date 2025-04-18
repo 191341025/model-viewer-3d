@@ -234,7 +234,7 @@
    */
   function switchModel(modelUrls) {
     loadingVisible.value = true
-    loadProgress.value = 0
+    loadProgress.value = 0.01  // 比 0 更好看
     clearAllInteractionProxies()
     resetMeshState()
     disposeCurrentScene()
