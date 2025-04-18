@@ -25,7 +25,7 @@
                 @change="toggleMainPlyVisibility"
                 />
             </div>
-            <button class="back-btn" @click="goBackOneLevel">⬅ 返回上一级</button>
+            <button class="back-btn" @click="goBackOneLevel">⬅ 上层 L:{{ levelNumber + 1 }}</button>
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
@@ -142,8 +142,6 @@
     const currentModelUrls = ref([]) 
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
-    // const mainPlyHidden = ref(false)
-    // const interactionEnabled = ref(false)
     const hoveredMesh = ref(null)
     const canvasContainer = ref(null)
     const loadProgress = ref(0)
@@ -285,7 +283,6 @@
         // ✅ 将当前模型压入历史记录
         if (currentModelUrls.value.length > 0) {
             modelHistory.value.push(currentModelUrls.value)
-            levelNumber.value +=1;
         }
         
         // ✅ 更新当前模型
@@ -300,7 +297,6 @@
         // ✅ 将当前模型压入历史记录
         if (currentModelUrls.value.length > 0) {
             modelHistory.value.push(currentModelUrls.value)
-            levelNumber.value +=1;
         }
         // ✅ 更新当前模型
         currentModelUrls.value = urlsToLoad
@@ -311,10 +307,6 @@
             const previousUrls = modelHistory.value.pop()
             // ✅ 更新当前模型引用
             currentModelUrls.value = previousUrls
-            levelNumber.value -=1
-            if(levelNumber.value < 0){
-                levelNumber.value = 0
-            }
             // ✅ 调用加载逻辑
             switchModel(previousUrls)
         } else {
@@ -325,16 +317,17 @@
                 console.error('URL解析失败:', err)
             }
             levelNumber.value = 0
+            modelHistory.value = []
             switchModel(urls)
         }
     }
 
     
     onMounted(() =>{
-        levelNumber.value -=1
-        if(levelNumber.value < 0){
-                levelNumber.value = 0
-            }
+        if(levelNumber.value == 2) {
+            levelNumber.value = 1
+        }
+        
         const raw = route.query.urls || '[]'
         try {
             urls = JSON.parse(raw)
@@ -367,7 +360,7 @@
                 onProgress: (p) => loadProgress.value = p,
                 onLoad: (meshes) => handleModelLoad(meshes),
                 onError: (err, url) => console.error('加载失败：', url, err),
-                clickHandler: levelNumber.value == 2? handleCanvasClick : handleCanvasClickUnPop
+                clickHandler: levelNumber.value == 1? handleCanvasClick : handleCanvasClickUnPop
             })
             canvasContainer.value.appendChild(renderer.domElement)
 
@@ -405,7 +398,6 @@
 
     function handleCanvasClickUnPop(event){
         if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
-        levelNumber.value +=1;
         const rect = renderer.domElement.getBoundingClientRect()
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
@@ -423,10 +415,11 @@
                 modelUrls = [mesh.userData.url]
             }
             // ✅ 将当前模型压入历史记录
-            if (currentModelUrls.value.length > 0) {
-                modelHistory.value.push(currentModelUrls.value)
-                levelNumber.value +=1;
-            }
+            // if (currentModelUrls.value.length > 0) {
+            //     // modelHistory.value.push(currentModelUrls.value)
+                
+            // }
+            levelNumber.value +=1;
             // ✅ 更新当前模型
             currentModelUrls.value = modelUrls
             switchModel(modelUrls) // ✅ 你现有的切换模型逻辑

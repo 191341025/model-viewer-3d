@@ -21,6 +21,10 @@
   
   <script setup>
     import { useRouter } from 'vue-router'
+    import { useUiStore } from '@/stores/uiStore'
+    import { storeToRefs } from 'pinia'
+    const uiStores = useUiStore()
+    const { levelNumber } = storeToRefs(uiStores)
     const emit = defineEmits(['close', 'loadHere', 'loadHerePop'])
     defineProps({
       visible: Boolean,
@@ -33,6 +37,7 @@
 
     const router = useRouter()
     const goToDetail = (info) => {
+      levelNumber.value=2
       emit('loadHerePop', info)
       router.push({
         name: 'ModelDetail',
