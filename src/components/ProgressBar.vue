@@ -26,7 +26,7 @@
       (newVal) => {
         setTimeout(()=>{
           currentProgress.value = Math.min(newVal, 100)
-        },400)
+        },200)
 
       },
       { immediate: true }

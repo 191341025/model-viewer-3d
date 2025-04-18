@@ -25,7 +25,7 @@ export function startAnimateLoop({
             hasRenderedOnce = true
             setTimeout(() => {
                 loadingVisible.value = false
-            }, 50) // 加点延迟让视觉过渡更自然
+            }, 300) // 加点延迟让视觉过渡更自然
         }
     }
 
