@@ -61,6 +61,7 @@
 
     import { storeToRefs } from 'pinia'
     import { useUiStore } from '@/stores/uiStore'
+    
     const uiStoress = useUiStore()
     const { mainPlyVisible } = storeToRefs(uiStoress)
     const { interactionEnabled } = storeToRefs(uiStoress)
@@ -260,10 +261,37 @@
         
         animate()
 
-        // const hoverTargets = ref([]) // 只检测目标对象
+        let clickStart = { x: 0, y: 0 };
 
-        renderer.domElement.addEventListener('click', (event) => {
-            if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
+            renderer.domElement.addEventListener('mousedown', (event) => {
+                clickStart = { x: event.clientX, y: event.clientY };
+            });
+
+            renderer.domElement.addEventListener('mouseup', (event) => {
+            const dx = event.clientX - clickStart.x;
+            const dy = event.clientY - clickStart.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // 拖动距离小于3像素才判定为点击
+            if (distance < 3) {
+                handleCanvasClick(event); // 你之前的 click 逻辑
+            }
+        });
+
+    })
+
+    onBeforeUnmount(() => {
+        cleanupThree({
+            renderer,
+            scene,
+            controls,
+            animationId,
+            resizeHandler: onWindowResize
+        })
+    })
+
+    function handleCanvasClick(event) {
+        if (!interactionEnabled.value) return // 🔒 点击前检查是否启用
             const rect = renderer.domElement.getBoundingClientRect()
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
@@ -292,19 +320,7 @@
             } else {
                 popupVisible.value = false
             }
-        })
-
-    })
-
-    onBeforeUnmount(() => {
-        cleanupThree({
-            renderer,
-            scene,
-            controls,
-            animationId,
-            resizeHandler: onWindowResize
-        })
-    })
+    }
 
     function onWindowResize() {
         if (!camera || !renderer) return
