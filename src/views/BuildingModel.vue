@@ -234,7 +234,7 @@
    */
   function switchModel(modelUrls) {
     loadingVisible.value = true
-    loadProgress.value = 0.01  // 比 0 更好看
+    loadProgress.value = 0.01 // 比 0 更好看
     clearAllInteractionProxies()
     resetMeshState()
     disposeCurrentScene()
@@ -574,7 +574,7 @@
     })
 
     toggleMainPlyVisibility(mainPlyVisible.value)
-    console.log(levelNumber.value)
+    // console.log(levelNumber.value)
     if(levelNumber.value == 0){
       fitCameraToObject(camera, controls, group, 1)
     } else {

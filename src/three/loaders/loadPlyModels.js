@@ -29,11 +29,12 @@ export function loadPlyModels(urls, scene, options = {}) {
   const loader = new PLYLoader() // 初始化 PLY 加载器
   const meshes = [] // 用于存储加载的模型网格
   let loadedCount = 0 // 计数器，用于跟踪已加载的模型数量
-
+  const lastUrl = urls[urls.length - 1] // 最后一个模型
   urls.forEach((url, index) => {
     loader.load(
       url,
       geometry => {
+
         // 计算几何体的顶点法线（用于光照效果）
         geometry.computeVertexNormals()
 
@@ -94,23 +95,19 @@ export function loadPlyModels(urls, scene, options = {}) {
         mesh.userData.originalColor = material.color.clone();   // 卡片标题或自定义名称
         mesh.renderOrder = 1;
         meshes.push(mesh) // 将网格添加到数组中
-
-        loadedCount++ // 增加已加载模型计数
         // const percent = loadedCount / urls.length // 计算加载进度百分比
         // options.onProgress?.(percent * 100) // 调用进度回调函数
-
+          loadedCount ++
         // 如果所有模型都已加载完成，调用 onLoad 回调
         if (loadedCount === urls.length) {
           options.onLoad?.(meshes)
         }
       },
       xhr => {
-        // 如果需要实时展示进度条的加载动画
-        if (xhr.lengthComputable) {
-          const realProgress = xhr.loaded / xhr.total // 计算当前文件的加载进度
-          const totalPercent = ((loadedCount + realProgress) / urls.length) * 100// 计算总进度
-          options.onProgress?.(totalPercent) // 调用进度回调函数
-        }
+          if (url === lastUrl && xhr.lengthComputable) {
+              const percent = (xhr.loaded / xhr.total) * 100
+              options.onProgress?.(percent)
+          }
       },
       error => {
         // 如果加载失败，打印错误信息并调用 onError 回调
