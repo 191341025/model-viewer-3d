@@ -25,7 +25,7 @@
                 @change="toggleMainPlyVisibility"
                 />
             </div>
-            <button class="back-btn" @click="goBackOneLevel">⬅ 去上层 当前Lv:{{ levelNumber + 1 }}</button>
+            <button class="back-btn" @click="goBackOneLevel">⬅ 上一层模型</button>
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
@@ -303,6 +303,10 @@
     }
 
     const goBackOneLevel = () => {
+        if(levelNumber.value == 0) {
+            alert('已经是最上层模型了！')
+            return
+        }
         if (modelHistory.value.length > 0) {
             const previousUrls = modelHistory.value.pop()
             // ✅ 更新当前模型引用
