@@ -59,3 +59,7 @@ export function createProxyFromMesh(mesh, options = {}) {
 export function getAllProxies() {
   return proxyMeshes
 }
+
+export function clearAllProxies() {
+  proxyMeshes.length = 0
+}

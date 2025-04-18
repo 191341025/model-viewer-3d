@@ -12,6 +12,7 @@
       </div>
       <div class="popup-footer" v-if="info.jump">
         <button class="detail-btn" @click="goToDetail(info)">查看详情 →</button>
+        <button class="load-btn" @click="loadHere(info)">当前加载</button>
       </div>
     </div>
   </div>
@@ -20,18 +21,19 @@
   
   <script setup>
     import { useRouter } from 'vue-router'
-
+    const emit = defineEmits(['close', 'loadHere', 'loadHerePop'])
     defineProps({
       visible: Boolean,
       info: Object,
       style: Object
     })
 
-    const emit = defineEmits(['close'])
+    const loadHere = (info) => {emit('loadHere', info)}
     const close = () => emit('close')
 
     const router = useRouter()
     const goToDetail = (info) => {
+      emit('loadHerePop', info)
       router.push({
         name: 'ModelDetail',
         query: {
@@ -111,6 +113,20 @@
 
     .detail-btn:hover {
       background-color: #66b1ff;
+    }
+    .load-btn {
+      background-color: #28c76f;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.2s ease;
+    }
+    .load-btn:hover {
+      background-color: #22a85d;
     }
 
   </style>

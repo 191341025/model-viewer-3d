@@ -1,15 +1,13 @@
+let animationId = null;
+
 export function startAnimateLoop({ scene, camera, renderer, controls, animateFn }) {
-    let animationId = 0
-
-    function loop() {
-        if (!renderer || !scene || !camera) return
-        animateFn()
-        controls?.update()
-        renderer.render(scene, camera)
-        animationId = requestAnimationFrame(loop)
+    cancelAnimationFrame(animationId); // 防止重复运行
+    function animate() {
+      animationId = requestAnimationFrame(animate)
+      controls?.update()
+      animateFn?.()
+      renderer.render(scene, camera)
     }
-
-    animationId = requestAnimationFrame(loop)
-    return animationId
+    animate()
   }
   

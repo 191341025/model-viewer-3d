@@ -25,8 +25,7 @@
                 @change="toggleMainPlyVisibility"
                 />
             </div>
-            <button @click="switchModel(model1)">加载模型 A</button>
-            <button @click="switchModel(model2)">加载模型 B</button>
+            <button class="back-btn" @click="goBackOneLevel">⬅ 返回上一级</button>
            <!--  <button class="interaction-toggle">其他按钮2</button> -->
         </div>
         <!-- ✅ 加载提示 -->
@@ -39,6 +38,8 @@
         :info="popupInfo"
         :style="popupStyle"
         @close="popupVisible = false"
+        @loadHere="handleModelReload"
+        @loadHerePop="handleModelReloadPop"
         />
     </div>
 </template>
@@ -63,18 +64,80 @@
     import { storeToRefs } from 'pinia'
     import { useUiStore } from '@/stores/uiStore'
     import { useThreeSceneStore } from '@/stores/threeScene'
+    import { clearAllProxies } from '@/three/utils/interactionProxies'
+
+
+
+    
+   
+    // 中间模型名 => 子模型 URL 列表
+    const modelUrlMap = {
+        'F1-overall': [
+            import.meta.env.BASE_URL + '/buildings/F1-main.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-a.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-b.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-c.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-d.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-e.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-f.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-g.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-h.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-i.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-j.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-k.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-l.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-m.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-n.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-o.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-room1.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-room2.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-Hallway1.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-Hallway2.ply',
+            import.meta.env.BASE_URL + '/buildings/F1-wc.ply'
+        ],
+        'F2-overall': [
+            import.meta.env.BASE_URL + '/buildings/F2-main.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-a.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-b.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-c.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-d.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-e.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-f.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-g.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-h.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-i.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-j.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-k.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-l.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-m.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-n.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-o.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-Hallway1.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-Hallway2.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-room1.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-room2.ply',
+            import.meta.env.BASE_URL + '/buildings/F2-wc.ply',
+        ]
+    }
+
+
+
+
+
+
 
     const sceneStore = useThreeSceneStore()
     
-    const uiStoress = useUiStore()
-    const { mainPlyVisible } = storeToRefs(uiStoress)
-    const { interactionEnabled } = storeToRefs(uiStoress)
+    const uiStores = useUiStore()
+    const { mainPlyVisible } = storeToRefs(uiStores)
+    const { interactionEnabled } = storeToRefs(uiStores)
+    const { modelHistory } = storeToRefs(uiStores)
     const route = useRoute()
 
     let hoverEvent = null
     let needHoverCheck = false
     let mainPlyMesh = ref([]); // 放到函数外面，全局用
-    const uiStore = useUiStore()
+    const currentModelUrls = ref([]) 
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2()
     // const mainPlyHidden = ref(false)
@@ -88,13 +151,6 @@
     const popupInfo = ref({ title: '', fields: {} })
     const popupStyle = ref({})
 
-    const model1 = [
-        import.meta.env.BASE_URL + '/buildings/F1-room1.ply',
-    ]
-    const model2 = [
-    import.meta.env.BASE_URL + '/buildings/F1-Hallway1.ply',
-        ]
-
     let urls = []
     // title 是普通字符串，无需 JSON.parse
     const modelTitle = route.query.title || '未命名模型'
@@ -107,7 +163,7 @@
 
     // 4. 动画渲染循环
     const animateFn = () => {
-            if (!renderer || !scene || !camera) return // ✅ 防御式写法
+            // if (!renderer || !scene || !camera) return // ✅ 防御式写法
             // 动画循环里只处理需要动画的 mesh
             loadedMeshes.value.forEach((mesh) => {
                 const geo = mesh.geometry
@@ -124,6 +180,9 @@
             if (interactionEnabled.value && hoveredMesh.value) {
                 const mat = hoveredMesh.value.material
                 if (mat && mat.userData) {
+                    // 保底赋值，防止 undefined 出错或断点暂停后异常
+                    if (typeof mat.userData.time !== 'number') mat.userData.time = 0;
+                    if (typeof mat.userData.speed !== 'number') mat.userData.speed = 4;
                     mat.userData.time += 0.02 * mat.userData.speed
                     const pulse = (Math.sin(mat.userData.time) + 1) / 2
                     // mat.color.setRGB(0.0, pulse * 0.5 + 0.1, 1.0)
@@ -170,7 +229,16 @@
         }
 
     const switchModel = (modelUrls) => {
-        
+
+        const allProxies = getAllProxies()
+        allProxies.forEach(proxy => {
+            proxy.removeFromParent()
+        })
+        clearAllProxies() // ✅ 每次清理旧的 proxy
+
+        loadedMeshes.value = []
+        hoveredMesh.value = null
+
         cleanupThree({
             renderer,
             scene,
@@ -178,6 +246,7 @@
             animationId,
             resizeHandler: onWindowResize
         })
+
         
         const newScene = createSceneBundle(canvasContainer.value)
         scene = newScene.scene
@@ -207,6 +276,53 @@
         window.addEventListener('resize', onWindowResize)
     }
 
+    const handleModelReload = (info) => {
+        popupVisible.value = false
+        const urlsToLoad = info.modelUrls || [info.modelUrl]
+        
+        // ✅ 将当前模型压入历史记录
+        if (currentModelUrls.value.length > 0) {
+            modelHistory.value.push(currentModelUrls.value)
+        }
+
+        // ✅ 更新当前模型
+        currentModelUrls.value = urlsToLoad
+
+
+        switchModel(urlsToLoad) // ✅ 你现有的切换模型逻辑
+    }
+
+    const handleModelReloadPop = (info) => {
+        const urlsToLoad = info.modelUrls || [info.modelUrl]
+        // ✅ 将当前模型压入历史记录
+        if (currentModelUrls.value.length > 0) {
+            modelHistory.value.push(currentModelUrls.value)
+        }
+        // ✅ 更新当前模型
+        currentModelUrls.value = urlsToLoad
+    }
+
+    const goBackOneLevel = () => {
+        console.log(route.query.urls)
+        if (modelHistory.value.length > 0) {
+            const previousUrls = modelHistory.value.pop()
+
+            // ✅ 更新当前模型引用
+            currentModelUrls.value = previousUrls
+
+            // ✅ 调用加载逻辑
+            switchModel(previousUrls)
+        } else {
+            const raw = route.query.urls || '[]'
+            try {
+                urls = JSON.parse(raw)
+            } catch (err) {
+                console.error('URL解析失败:', err)
+            }
+            switchModel(urls)
+        }
+    }
+
     
     onMounted(() =>{
         const raw = route.query.urls || '[]'
@@ -215,38 +331,59 @@
         } catch (err) {
             console.error('URL解析失败:', err)
         }
-        const newScene = createSceneBundle(canvasContainer.value)
-        scene = newScene.scene
-        camera = newScene.camera
-        renderer = newScene.renderer
-        controls = newScene.controls
 
-        group = new THREE.Group()
-        group.rotation.x = -Math.PI / 2;
-        loadModelAndInitEvents({
-            urls: JSON.parse(route.query.urls || '[]'),
-            scene,
-            group,
-            canvas: renderer.domElement,
-            onProgress: (p) => loadProgress.value = p,
-            onLoad: (meshes) => handleModelLoad(meshes),
-            onError: (err, url) => console.error('加载失败：', url, err),
-            clickHandler: handleCanvasClick
-        })
-        canvasContainer.value.appendChild(renderer.domElement)
+        if (modelHistory.value.length > 0) {
+            const previousUrls = modelHistory.value.pop()
 
-        animationId = startAnimateLoop({
-            scene,
-            camera,
-            renderer,
-            controls,
-            animateFn: animateFn
-        })
-        window.addEventListener('resize', onWindowResize)
+            // ✅ 更新当前模型引用
+            currentModelUrls.value = previousUrls
 
+            // ✅ 调用加载逻辑
+            switchModel(previousUrls)
+        } else {
+            const newScene = createSceneBundle(canvasContainer.value)
+            scene = newScene.scene
+            camera = newScene.camera
+            renderer = newScene.renderer
+            controls = newScene.controls
+
+            group = new THREE.Group()
+            group.rotation.x = -Math.PI / 2;
+            loadModelAndInitEvents({
+                urls: JSON.parse(route.query.urls || '[]'),
+                scene,
+                group,
+                canvas: renderer.domElement,
+                onProgress: (p) => loadProgress.value = p,
+                onLoad: (meshes) => handleModelLoad(meshes),
+                onError: (err, url) => console.error('加载失败：', url, err),
+                clickHandler: handleCanvasClick
+            })
+            canvasContainer.value.appendChild(renderer.domElement)
+
+            animationId = startAnimateLoop({
+                scene,
+                camera,
+                renderer,
+                controls,
+                animateFn: animateFn
+            })
+            window.addEventListener('resize', onWindowResize)
+        }
+
+        
     })
 
     onBeforeUnmount(() => {
+        const allProxies = getAllProxies()
+        allProxies.forEach(proxy => {
+            proxy.removeFromParent()
+        })
+        clearAllProxies() // ✅ 每次清理旧的 proxy
+
+        loadedMeshes.value = []
+        hoveredMesh.value = null
+
         cleanupThree({
             renderer,
             scene,
@@ -266,6 +403,8 @@
             const intersects = raycaster.intersectObjects(getAllProxies().filter(p => p.userData.isProxy), false)
             if (intersects.length > 0) {
                 const mesh = intersects[0].object
+                const modelKey = mesh.name
+                const hasChildren = modelUrlMap[modelKey] !== undefined
                 popupInfo.value = {
                     title: mesh.name,
                     id: mesh.uuid.slice(0, 8),
@@ -276,7 +415,8 @@
                         类型: '交互楼层',
                         名称: mesh.name,
                         编号: mesh.uuid.slice(0, 8)
-                    }
+                    },
+                    modelUrls: hasChildren ? modelUrlMap[modelKey] : null
                 }
                 popupStyle.value = {
                     top: `${event.clientY + 10}px`,
@@ -375,6 +515,12 @@
 
     function handleModelLoad(meshes){
         meshes.forEach((mesh, index) => {
+            mesh.material = mesh.material.clone()
+            mesh.material.userData = {
+            time: 0,
+            speed: 4,
+            }
+
             // 在 meshes.forEach 里面加这个：
             if (mesh.name.includes('main')) {
                 mainPlyMesh.value.push(mesh)

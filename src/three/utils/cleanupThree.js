@@ -20,6 +20,7 @@ export function cleanupThree({
     // ✅ 停止动画帧
     if (animationId) {
       cancelAnimationFrame(animationId)
+      animationId = null
     }
 
     // ✅ 移除 resize 监听器
