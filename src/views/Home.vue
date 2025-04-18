@@ -6,12 +6,12 @@
       <div class="model-wrapper">
         <div class="model-box">
           <img src="@/assets/images/model-placeholder.png" class="model-image" />
-          <div class="info-card">
+          <!-- <div class="info-card">
             <div class="info-title">简介</div>
             <div class="info-desc">
-              本模型用于演示 Three.js 的加载与交互效果，适用于建筑结构展示、产品剖析等场景。<br />
+                本站点主要为点云模型提供交互效果，适用于建筑结构展示、产品剖析等场景。<br />
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
